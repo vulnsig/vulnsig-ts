@@ -1,0 +1,36 @@
+{
+  "name": "threatprint",
+  "version": "0.1.0",
+  "description": "Render CVSS vulnerability vectors as expressive SVG fingerprints",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cvss",
+    "vulnerability",
+    "svg",
+    "glyph",
+    "security",
+    "threatprint"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ae-cvss-calculator": "^1.0.9"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
