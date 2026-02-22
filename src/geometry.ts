@@ -1,9 +1,12 @@
 const DEG2RAD = Math.PI / 180;
 
 export function arcPath(
-  cx: number, cy: number,
-  innerR: number, outerR: number,
-  startDeg: number, endDeg: number,
+  cx: number,
+  cy: number,
+  innerR: number,
+  outerR: number,
+  startDeg: number,
+  endDeg: number,
 ): string {
   const s = startDeg * DEG2RAD;
   const e = endDeg * DEG2RAD;
@@ -20,9 +23,11 @@ export function arcPath(
 }
 
 export function starPath(
-  cx: number, cy: number,
+  cx: number,
+  cy: number,
   points: number,
-  outerR: number, innerR: number,
+  outerR: number,
+  innerR: number,
 ): string {
   let d = '';
   for (let i = 0; i < points; i++) {
@@ -38,8 +43,10 @@ export function starPath(
 }
 
 export function radialCuts(
-  startDeg: number, endDeg: number,
-  cutWidth: number, gapDeg: number,
+  startDeg: number,
+  endDeg: number,
+  cutWidth: number,
+  gapDeg: number,
 ): { startDeg: number; endDeg: number }[] {
   const cuts: { startDeg: number; endDeg: number }[] = [];
   const sectorSpan = endDeg - startDeg;

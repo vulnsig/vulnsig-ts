@@ -16,6 +16,8 @@
   ],
   "scripts": {
     "build": "tsc",
+    "lint": "eslint src/",
+    "format": "prettier --write src/",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -31,6 +33,11 @@
     "ae-cvss-calculator": "^1.0.9"
   },
   "devDependencies": {
-    "typescript": "^5.4.0"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.56.0"
   }
 }

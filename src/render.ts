@@ -31,7 +31,8 @@ export function renderGlyph(options: RenderOptions): string {
   const hasAnySub = sc > 0 || si > 0 || sa > 0;
   const atPresent = at < 0.5;
 
-  const cx = 60, cy = 60;
+  const cx = 60,
+    cy = 60;
   const petalCount = ({ N: 8, A: 6, L: 4, P: 3 } as Record<string, number>)[metrics.AV] || 8;
 
   // Geometry constants
@@ -82,7 +83,9 @@ export function renderGlyph(options: RenderOptions): string {
 
   // Defs
   parts.push(`<defs><radialGradient id="${gradId}" cx="50%" cy="50%" r="50%">`);
-  parts.push(`<stop offset="0%" stop-color="hsla(${hue}, ${sfSat * 1.1}%, ${sfLight + 6}%, ${Math.min(1, sfAlpha + 0.1)})"/>`);
+  parts.push(
+    `<stop offset="0%" stop-color="hsla(${hue}, ${sfSat * 1.1}%, ${sfLight + 6}%, ${Math.min(1, sfAlpha + 0.1)})"/>`,
+  );
   parts.push(`<stop offset="100%" stop-color="hsla(${hue}, ${sfSat}%, ${sfLight}%, ${sfAlpha})"/>`);
   parts.push(`</radialGradient></defs>`);
 
@@ -94,7 +97,9 @@ export function renderGlyph(options: RenderOptions): string {
       const y1 = cy + Math.sin(a) * spikeBase;
       const x2 = cx + Math.cos(a) * (spikeBase + 4.7);
       const y2 = cy + Math.sin(a) * (spikeBase + 4.7);
-      parts.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsla(${hue}, ${sat}%, 65%, 0.7)" stroke-width="4.5" stroke-linecap="butt"/>`);
+      parts.push(
+        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsla(${hue}, ${sat}%, 65%, 0.7)" stroke-width="4.5" stroke-linecap="butt"/>`,
+      );
     }
   }
 
@@ -111,7 +116,9 @@ export function renderGlyph(options: RenderOptions): string {
       const y1 = by + Math.sin(perpL) * bumpR;
       const x2 = bx + Math.cos(perpR) * bumpR;
       const y2 = by + Math.sin(perpR) * bumpR;
-      parts.push(`<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsla(${hue}, ${sat}%, 60%, 0.65)"/>`);
+      parts.push(
+        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsla(${hue}, ${sat}%, 60%, 0.65)"/>`,
+      );
     }
   }
 
@@ -123,17 +130,23 @@ export function renderGlyph(options: RenderOptions): string {
   parts.push(`<path d="${starD}" fill="url(#${gradId})" stroke="none"/>`);
 
   // Z-order 5: Star stroke
-  parts.push(`<path d="${starD}" fill="none" stroke="hsla(${hue}, ${sat * 0.5}%, 70%, ${prStrokeAlpha})" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`);
+  parts.push(
+    `<path d="${starD}" fill="none" stroke="hsla(${hue}, ${sat * 0.5}%, 70%, ${prStrokeAlpha})" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
+  );
 
   // Z-order 6 & 7: CIA ring sectors
   for (const sec of sectors) {
     // Vuln band (inner)
     const vulnBandOuter = hasAnySub ? vulnOuterR : outerR;
-    parts.push(`<path d="${arcPath(cx, cy, vulnInnerR, vulnBandOuter, sec.s, sec.e)}" fill="${ringFill(sec.vuln, hue, sat)}"/>`);
+    parts.push(
+      `<path d="${arcPath(cx, cy, vulnInnerR, vulnBandOuter, sec.s, sec.e)}" fill="${ringFill(sec.vuln, hue, sat)}"/>`,
+    );
 
     // Sub band (outer) — only when split
     if (hasAnySub) {
-      parts.push(`<path d="${arcPath(cx, cy, subInnerR, outerR, sec.s, sec.e)}" fill="${ringFill(sec.sub, hue, sat)}"/>`);
+      parts.push(
+        `<path d="${arcPath(cx, cy, subInnerR, outerR, sec.s, sec.e)}" fill="${ringFill(sec.sub, hue, sat)}"/>`,
+      );
     }
   }
 
@@ -142,13 +155,17 @@ export function renderGlyph(options: RenderOptions): string {
     for (const sec of sectors) {
       const cuts = radialCuts(sec.s, sec.e, cutWidthDeg, cutGapDeg);
       for (const cut of cuts) {
-        parts.push(`<path d="${arcPath(cx, cy, vulnInnerR - 0.5, outerR + 0.5, cut.startDeg, cut.endDeg)}" fill="${bgColor}"/>`);
+        parts.push(
+          `<path d="${arcPath(cx, cy, vulnInnerR - 0.5, outerR + 0.5, cut.startDeg, cut.endDeg)}" fill="${bgColor}"/>`,
+        );
       }
     }
   }
 
   // Z-order 9: Outer hue ring
-  parts.push(`<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, 52%)" stroke-width="${ringWidth}"/>`);
+  parts.push(
+    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, 52%)" stroke-width="${ringWidth}"/>`,
+  );
 
   // Z-order 10: Sector labels
   if (showLabel && size >= 140) {
@@ -159,12 +176,15 @@ export function renderGlyph(options: RenderOptions): string {
       const labelR = hasAnySub ? (vulnInnerR + vulnOuterR) / 2 : (vulnInnerR + outerR) / 2;
       const lx = cx + Math.cos(midRad) * labelR;
       const ly = cy + Math.sin(midRad) * labelR;
-      const fill = sec.vuln > 0.5
-        ? 'rgba(0,0,0,0.4)'
-        : sec.vuln > 0.01
-          ? 'rgba(255,255,255,0.22)'
-          : 'rgba(255,255,255,0.07)';
-      parts.push(`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" fill="${fill}" font-size="${fontSize}" font-family="'JetBrains Mono', monospace" font-weight="700">${sec.key}</text>`);
+      const fill =
+        sec.vuln > 0.5
+          ? 'rgba(0,0,0,0.4)'
+          : sec.vuln > 0.01
+            ? 'rgba(255,255,255,0.22)'
+            : 'rgba(255,255,255,0.07)';
+      parts.push(
+        `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" fill="${fill}" font-size="${fontSize}" font-family="'JetBrains Mono', monospace" font-weight="700">${sec.key}</text>`,
+      );
     }
   }
 
