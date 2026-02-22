@@ -20,6 +20,7 @@
     "format": "prettier --write src/",
     "format:check": "prettier --check src/",
     "test": "vitest run",
+    "preview": "npm run build && node scripts/preview.mjs && open doc/preview.html",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
