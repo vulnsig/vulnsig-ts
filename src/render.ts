@@ -55,8 +55,7 @@ export function renderGlyph(options: RenderOptions): string {
 
   // PR stroke
   const prRaw = metrics.PR;
-  const prStrokeWidth = prRaw === 'H' ? 2.5 : prRaw === 'L' ? 1.5 : 0.5;
-  const prStrokeAlpha = prRaw === 'H' ? 0.8 : prRaw === 'L' ? 0.55 : 0.2;
+  const prStrokeWidth = prRaw === 'H' ? 2.5 : prRaw === 'L' ? 1.0 : 0;
 
   // UI spikes/bumps
   const uiRaw = metrics.UI;
@@ -129,10 +128,12 @@ export function renderGlyph(options: RenderOptions): string {
   const starD = starPath(cx, cy, petalCount, starOuterR, starInnerR);
   parts.push(`<path d="${starD}" fill="url(#${gradId})" stroke="none"/>`);
 
-  // Z-order 5: Star stroke
-  parts.push(
-    `<path d="${starD}" fill="none" stroke="hsla(${hue}, ${sat * 0.5}%, 70%, ${prStrokeAlpha})" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
-  );
+  // Z-order 5: Star stroke (PR:N = no stroke)
+  if (prStrokeWidth > 0) {
+    parts.push(
+      `<path d="${starD}" fill="none" stroke="hsl(${hue}, ${sat}%, 72%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
+    );
+  }
 
   // Z-order 6 & 7: CIA ring sectors
   for (const sec of sectors) {

@@ -1,20 +1,22 @@
 import type { HueResult } from './types.js';
 
 export function scoreToHue(score: number): HueResult {
-  const w = score / 10;
+  const w = Math.max(0, Math.min(10, score)) / 10;
+
+  // Yellow (low) → Orange (mid) → Dark Red (high)
+  // Matching fetter-orb VulnScoreIcon color range:
+  //   0 = yellow  hsl(45, 93%, 47%)
+  //   5 = orange  hsl(25, 95%, 53%)
+  //  10 = dark red hsl(0, 70%, 35%)
   let hue: number;
+  if (w <= 0.5) {
+    // yellow → orange: hue 45 → 25
+    hue = 45 - (w / 0.5) * 20;
+  } else {
+    // orange → dark red: hue 25 → 0
+    hue = 25 - ((w - 0.5) / 0.5) * 25;
+  }
 
-  if (w <= 0.1) hue = 175;
-  else if (w <= 0.25) hue = 175 + ((w - 0.1) / 0.15) * 30;
-  else if (w <= 0.4) hue = 205 + ((w - 0.25) / 0.15) * 40;
-  else if (w <= 0.55) hue = 245 + ((w - 0.4) / 0.15) * 30;
-  else if (w <= 0.7) hue = 275 + ((w - 0.55) / 0.15) * 40;
-  else if (w <= 0.8) hue = 315 + ((w - 0.7) / 0.1) * 30;
-  else if (w <= 0.9) hue = 345 + ((w - 0.8) / 0.1) * 20;
-  else hue = 5 + ((w - 0.9) / 0.1) * 35;
-
-  if (hue >= 360) hue -= 360;
-
-  const sat = 60 + w * 25;
+  const sat = 70 + (1 - w) * 25; // 95% at low → 70% at high
   return { hue, sat };
 }

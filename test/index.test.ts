@@ -20,16 +20,16 @@ describe('parseCVSS', () => {
 });
 
 describe('scoreToHue', () => {
-  it('returns teal for score 0', () => {
-    expect(scoreToHue(0).hue).toBe(175);
+  it('returns yellow for score 0', () => {
+    expect(scoreToHue(0).hue).toBe(45);
   });
 
-  it('returns amber for score 10', () => {
-    expect(scoreToHue(10).hue).toBeCloseTo(40, 0);
+  it('returns dark red for score 10', () => {
+    expect(scoreToHue(10).hue).toBe(0);
   });
 
-  it('saturation increases with score', () => {
-    expect(scoreToHue(0).sat).toBeLessThan(scoreToHue(10).sat);
+  it('hue decreases with score', () => {
+    expect(scoreToHue(0).hue).toBeGreaterThan(scoreToHue(10).hue);
   });
 });
 

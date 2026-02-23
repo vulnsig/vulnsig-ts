@@ -146,7 +146,7 @@ Each CVSS 4.0 base metric maps to exactly one visual channel. There is no double
 
 | Visual Property | Metric(s) | Encoding | Values |
 |----------------|-----------|----------|--------|
-| **Overall hue** | CVSS Base Score | Continuous color spectrum | 0=teal → 5=purple → 10=amber |
+| **Overall hue** | CVSS Base Score | Continuous warm spectrum | 0=yellow → 5=orange → 10=dark red |
 | **Outer hue ring** | CVSS Base Score | Undivided ring, always full saturation | Constant reference |
 | **Star points** | AV (Attack Vector) | Point count | N=8, A=6, L=4, P=3 |
 | **Star pointiness** | AC (Attack Complexity) | Inner radius ratio | L=0.25 (sharp), H=0.55 (blunt) |
@@ -165,24 +165,18 @@ Each CVSS 4.0 base metric maps to exactly one visual channel. There is no double
 
 ### 1. Color Hue — CVSS Base Score (0–10)
 
-The score drives a continuous hue spectrum across the entire glyph. This hue tints the CIA ring segments, the star fill, the outer hue ring, and the spikes/bumps.
+The score drives a continuous warm color spectrum across the entire glyph. This hue tints the CIA ring segments, the star fill, the outer hue ring, and the spikes/bumps.
 
 **Hue mapping (piecewise linear):**
 
 | Score Range | Hue Range | Color |
 |-------------|-----------|-------|
-| 0.0 – 1.0 | 175° | Deep teal |
-| 1.0 – 2.5 | 175° → 205° | Teal → Cyan |
-| 2.5 – 4.0 | 205° → 245° | Cyan → Blue |
-| 4.0 – 5.5 | 245° → 275° | Blue → Purple |
-| 5.5 – 7.0 | 275° → 315° | Purple → Magenta |
-| 7.0 – 8.0 | 315° → 345° | Magenta → Rose |
-| 8.0 – 9.0 | 345° → 365° | Rose → Red |
-| 9.0 – 10.0 | 5° → 40° | Red → Amber |
+| 0.0 – 5.0 | 45° → 25° | Yellow → Orange |
+| 5.0 – 10.0 | 25° → 0° | Orange → Dark Red |
 
-**Saturation:** `60 + (score/10) * 25` — ranges from 60% to 85%.
+**Saturation:** `70 + (1 - score/10) * 25` — ranges from 95% (low scores) to 70% (high scores).
 
-When `score` is `null` and auto-calculation fails, default to `w = 0.5` (mid-range purple).
+When `score` is `null` and auto-calculation fails, default to `w = 0.5` (mid-range orange).
 
 ### 2. Ring System — Proportional Three-Ring Architecture
 
@@ -288,15 +282,15 @@ starInnerR = starOuterR * (0.75 - ac * 0.5)
 
 ### 9. Star Outline — PR (Privileges Required)
 
-The star's stroke weight and opacity encode privilege requirements:
+The star's stroke weight encodes privilege requirements. All strokes are fully opaque.
 
-| PR Value | Stroke Width | Stroke Alpha | Visual |
-|----------|-------------|--------------|--------|
-| None (N) | 0.5 | 0.2 | Barely visible — open, exposed |
-| Low (L) | 1.5 | 0.55 | Medium outline |
-| High (H) | 2.5 | 0.8 | Thick bold border — shielded |
+| PR Value | Stroke Width | Visual |
+|----------|-------------|--------|
+| None (N) | 0 | No outline — open, exposed |
+| Low (L) | 1.0 | Medium outline |
+| High (H) | 2.5 | Thick bold border — shielded |
 
-- **Stroke color:** `hsla(hue, sat*0.5%, 70%, alpha)`
+- **Stroke color:** `hsl(hue, sat%, 72%)` — a bright, fully opaque version of the glyph hue
 - **Stroke line join:** round
 
 ### 10. Star Fill — Score Color
