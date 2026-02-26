@@ -5,13 +5,18 @@ export const METRIC_DEFS: Record<string, { severity: Record<string, number> }> =
   AC: { severity: { L: 1.0, H: 0.4 } },
   AT: { severity: { N: 1.0, P: 0.4 } },
   PR: { severity: { N: 1.0, L: 0.6, H: 0.2 } },
-  UI: { severity: { N: 1.0, P: 0.6, A: 0.2 } },
+  UI: { severity: { N: 1.0, P: 0.6, A: 0.2, R: 0.2 } }, // R for CVSS 3.1
   VC: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
   VI: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
   VA: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
   SC: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
   SI: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
   SA: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
+  // CVSS 3.1 metrics (C/I/A without V prefix, S for scope)
+  C: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
+  I: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
+  A: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
+  S: { severity: { C: 1.0, U: 0.0 } }, // Scope: Changed or Unchanged
 };
 
 export function parseCVSS(vector: string): ParsedMetrics {
@@ -21,6 +26,13 @@ export function parseCVSS(vector: string): ParsedMetrics {
     if (METRIC_DEFS[key]) m[key] = val;
   }
   return m as unknown as ParsedMetrics;
+}
+
+export function detectCVSSVersion(vector: string): '3.1' | '4.0' {
+  if (vector.includes('CVSS:3.1')) {
+    return '3.1';
+  }
+  return '4.0';
 }
 
 export function getSeverity(metrics: ParsedMetrics, key: string): number {

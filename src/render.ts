@@ -1,5 +1,5 @@
 import type { RenderOptions } from './types.js';
-import { parseCVSS, getSeverity } from './parse.js';
+import { parseCVSS, getSeverity, detectCVSSVersion } from './parse.js';
 import { calculateScore } from './score.js';
 import { scoreToHue } from './color.js';
 import { arcPath, starPath, radialCuts, ringFill } from './geometry.js';
@@ -7,6 +7,7 @@ import { arcPath, starPath, radialCuts, ringFill } from './geometry.js';
 export function renderGlyph(options: RenderOptions): string {
   const { vector, size = 120, showLabel = true } = options;
   const metrics = parseCVSS(vector);
+  const version = detectCVSSVersion(vector);
 
   // Score precedence: explicit → auto-calculate → fallback 5.0
   let score: number;
@@ -18,15 +19,38 @@ export function renderGlyph(options: RenderOptions): string {
 
   const { hue, sat } = scoreToHue(score);
 
-  // Metric severities
+  // Metric severities - handle both CVSS 3.1 and 4.0
   const ac = getSeverity(metrics, 'AC');
-  const at = getSeverity(metrics, 'AT');
-  const vc = getSeverity(metrics, 'VC');
-  const vi = getSeverity(metrics, 'VI');
-  const va = getSeverity(metrics, 'VA');
-  const sc = getSeverity(metrics, 'SC');
-  const si = getSeverity(metrics, 'SI');
-  const sa = getSeverity(metrics, 'SA');
+  
+  // For CVSS 3.1, AT doesn't exist, so always treat as solid (AT:N)
+  const at = version === '3.1' ? 1.0 : getSeverity(metrics, 'AT');
+  
+  // For CVSS 3.1, use C/I/A instead of VC/VI/VA
+  const vc = version === '3.1' ? getSeverity(metrics, 'C') : getSeverity(metrics, 'VC');
+  const vi = version === '3.1' ? getSeverity(metrics, 'I') : getSeverity(metrics, 'VI');
+  const va = version === '3.1' ? getSeverity(metrics, 'A') : getSeverity(metrics, 'VA');
+  
+  // For CVSS 3.1, if S:C (Changed), both bands mirror C/I/A. If S:U (Unchanged), no split.
+  let sc: number, si: number, sa: number;
+  if (version === '3.1') {
+    const scopeChanged = getSeverity(metrics, 'S') > 0.5; // S:C = 1.0, S:U = 0.0
+    if (scopeChanged) {
+      // Split band: both bands mirror C/I/A
+      sc = vc;
+      si = vi;
+      sa = va;
+    } else {
+      // No split
+      sc = 0;
+      si = 0;
+      sa = 0;
+    }
+  } else {
+    // CVSS 4.0: use SC/SI/SA directly
+    sc = getSeverity(metrics, 'SC');
+    si = getSeverity(metrics, 'SI');
+    sa = getSeverity(metrics, 'SA');
+  }
 
   const hasAnySub = sc > 0 || si > 0 || sa > 0;
   const atPresent = at < 0.5;

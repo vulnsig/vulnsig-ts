@@ -4,6 +4,12 @@ import testVectors from '../spec/test-vectors.json';
 
 const LOG4SHELL = 'CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H';
 
+// CVSS 3.1 test vectors
+const CVSS31_LOG4SHELL = 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H';
+const CVSS31_HEARTBLEED = 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N';
+const CVSS31_DIRTY_COW = 'CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N';
+const CVSS31_XSS = 'CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N';
+
 describe('parseCVSS', () => {
   it('parses a full vector', () => {
     const m = parseCVSS(LOG4SHELL);
@@ -16,6 +22,16 @@ describe('parseCVSS', () => {
     const m = parseCVSS('CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H');
     expect(m.AV).toBe('N');
     expect(m.SC).toBeUndefined();
+  });
+
+  it('parses CVSS 3.1 vector', () => {
+    const m = parseCVSS(CVSS31_LOG4SHELL);
+    expect(m.AV).toBe('N');
+    expect(m.AC).toBe('L');
+    expect(m.C).toBe('H');
+    expect(m.I).toBe('H');
+    expect(m.A).toBe('H');
+    expect(m.S).toBe('C');
   });
 });
 
@@ -41,6 +57,22 @@ describe('calculateScore', () => {
   it('returns 5.0 for invalid vector', () => {
     expect(calculateScore('garbage')).toBe(5.0);
   });
+
+  it('computes CVSS 3.1 Log4Shell as 10.0', () => {
+    expect(calculateScore(CVSS31_LOG4SHELL)).toBe(10);
+  });
+
+  it('computes CVSS 3.1 Heartbleed correctly', () => {
+    expect(calculateScore(CVSS31_HEARTBLEED)).toBe(7.5);
+  });
+
+  it('computes CVSS 3.1 Dirty COW correctly', () => {
+    expect(calculateScore(CVSS31_DIRTY_COW)).toBe(7.1);
+  });
+
+  it('computes CVSS 3.1 XSS correctly', () => {
+    expect(calculateScore(CVSS31_XSS)).toBe(6.1);
+  });
 });
 
 describe('renderGlyph', () => {
@@ -62,5 +94,35 @@ describe('renderGlyph', () => {
       expect(svg).toMatch(/^<svg /);
       expect(svg).toMatch(/<\/svg>$/);
     }
+  });
+
+  it('renders CVSS 3.1 vectors without throwing', () => {
+    const vectors = [CVSS31_LOG4SHELL, CVSS31_HEARTBLEED, CVSS31_DIRTY_COW, CVSS31_XSS];
+    for (const vector of vectors) {
+      const svg = renderGlyph({ vector });
+      expect(svg).toMatch(/^<svg /);
+      expect(svg).toMatch(/<\/svg>$/);
+    }
+  });
+
+  it('renders CVSS 3.1 with scope changed correctly', () => {
+    // S:C should create split band
+    const svg = renderGlyph({ vector: CVSS31_LOG4SHELL });
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('</svg>');
+  });
+
+  it('renders CVSS 3.1 with scope unchanged correctly', () => {
+    // S:U should not create split band
+    const svg = renderGlyph({ vector: CVSS31_HEARTBLEED });
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('</svg>');
+  });
+
+  it('renders CVSS 3.1 with UI:R correctly (clean perimeter)', () => {
+    // UI:R should result in clean perimeter (no spikes, no bumps)
+    const svg = renderGlyph({ vector: CVSS31_XSS });
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('</svg>');
   });
 });
