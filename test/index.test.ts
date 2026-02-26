@@ -105,22 +105,22 @@ describe('renderGlyph', () => {
     }
   });
 
-  it('renders CVSS 3.1 with scope changed correctly', () => {
-    // S:C should create split band
+  it('renders CVSS 3.1 with scope changed (split band)', () => {
+    // S:C should create split band (renders without errors)
     const svg = renderGlyph({ vector: CVSS31_LOG4SHELL });
     expect(svg).toContain('<svg');
     expect(svg).toContain('</svg>');
   });
 
-  it('renders CVSS 3.1 with scope unchanged correctly', () => {
-    // S:U should not create split band
+  it('renders CVSS 3.1 with scope unchanged (no split)', () => {
+    // S:U should not create split band (renders without errors)
     const svg = renderGlyph({ vector: CVSS31_HEARTBLEED });
     expect(svg).toContain('<svg');
     expect(svg).toContain('</svg>');
   });
 
-  it('renders CVSS 3.1 with UI:R correctly (clean perimeter)', () => {
-    // UI:R should result in clean perimeter (no spikes, no bumps)
+  it('renders CVSS 3.1 with UI:R (clean perimeter)', () => {
+    // UI:R should result in clean perimeter - no spikes, no bumps (renders without errors)
     const svg = renderGlyph({ vector: CVSS31_XSS });
     expect(svg).toContain('<svg');
     expect(svg).toContain('</svg>');
