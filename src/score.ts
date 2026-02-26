@@ -18,7 +18,7 @@ export function calculateScore(vector: string): number {
       cvss.applyVector(vector);
       return cvss.calculateScores().base ?? 5.0;
     } else {
-      // CVSS 4.0
+      // CVSS 4.0 (validated by detectCVSSVersion)
       const cvss = new Cvss4P0();
       cvss.applyVector(vector);
       return cvss.calculateScores().base ?? cvss.calculateScores().overall;
