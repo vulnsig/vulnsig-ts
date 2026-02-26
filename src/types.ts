@@ -1,5 +1,5 @@
 export interface RenderOptions {
-  /** CVSS 4.0 or CVSS 3.1 vector string */
+  /** CVSS 4.0, CVSS 3.1, or CVSS 3.0 vector string */
   vector: string;
   /** Explicit score override (0-10). Auto-calculated when null. */
   score?: number | null;
