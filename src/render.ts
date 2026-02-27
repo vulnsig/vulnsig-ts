@@ -5,7 +5,7 @@ import { scoreToHue } from './color.js';
 import { arcPath, starPath, radialCuts, ringFill } from './geometry.js';
 
 export function renderGlyph(options: RenderOptions): string {
-  const { vector, size = 120, showLabel = true } = options;
+  const { vector, size = 120 } = options;
   const metrics = parseCVSS(vector);
   const version = detectCVSSVersion(vector);
 
@@ -85,9 +85,9 @@ export function renderGlyph(options: RenderOptions): string {
   const uiRaw = metrics.UI;
   const spikeBase = hueRingR + ringWidth / 2 - 0.5;
 
-  // Star fill
-  const sfSat = sat * 0.85;
-  const sfLight = 35 * light;
+  // Star fill — match the outer hue ring color
+  const sfSat = sat;
+  const sfLight = 52 * light;
   const sfAlpha = 0.85;
 
   const bgColor = `hsl(${hue}, 4%, 5%)`;
@@ -121,7 +121,7 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = cx + Math.cos(a) * (spikeBase + 4.7);
       const y2 = cy + Math.sin(a) * (spikeBase + 4.7);
       parts.push(
-        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsla(${hue}, ${sat}%, ${65 * light}%, 0.7)" stroke-width="4.5" stroke-linecap="butt"/>`,
+        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="4.5" stroke-linecap="butt"/>`,
       );
     }
   }
@@ -140,7 +140,7 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = bx + Math.cos(perpR) * bumpR;
       const y2 = by + Math.sin(perpR) * bumpR;
       parts.push(
-        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsla(${hue}, ${sat}%, ${60 * light}%, 0.65)"/>`,
+        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsl(${hue}, ${sat}%, ${52 * light}%)"/>`,
       );
     }
   }
@@ -192,26 +192,6 @@ export function renderGlyph(options: RenderOptions): string {
     `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="${ringWidth}"/>`,
   );
 
-  // Z-order 10: Sector labels
-  if (showLabel && size >= 140) {
-    const fontSize = size >= 200 ? 8 : 6;
-    for (const sec of sectors) {
-      const midDeg = (sec.s + sec.e) / 2;
-      const midRad = (midDeg * Math.PI) / 180;
-      const labelR = hasAnySub ? (vulnInnerR + vulnOuterR) / 2 : (vulnInnerR + outerR) / 2;
-      const lx = cx + Math.cos(midRad) * labelR;
-      const ly = cy + Math.sin(midRad) * labelR;
-      const fill =
-        sec.vuln > 0.5
-          ? 'rgba(0,0,0,0.4)'
-          : sec.vuln > 0.01
-            ? 'rgba(255,255,255,0.22)'
-            : 'rgba(255,255,255,0.07)';
-      parts.push(
-        `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" fill="${fill}" font-size="${fontSize}" font-family="'JetBrains Mono', monospace" font-weight="700">${sec.key}</text>`,
-      );
-    }
-  }
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 120 120" style="overflow:visible">${parts.join('')}</svg>`;
 }

@@ -5,8 +5,6 @@ export interface RenderOptions {
   score?: number | null;
   /** Rendered size in pixels. Default: 120 */
   size?: number;
-  /** Show C/I/A sector labels when size >= 140. Default: true */
-  showLabel?: boolean;
 }
 
 export interface ParsedMetrics {
