@@ -1,6 +1,6 @@
 {
   "name": "vulnsig",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Render CVSS vulnerability vectors as expressive SVG glyphs",
   "type": "module",
   "main": "./dist/index.js",
