@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { renderGlyph, parseCVSS, scoreToHue, calculateScore } from '../src/index.js';
-import { detectCVSSVersion, isVersion3 } from '../src/parse.js';
+import { renderGlyph } from '../src/index.js';
+import { parseCVSS, detectCVSSVersion, isVersion3 } from '../src/parse.js';
+import { scoreToHue } from '../src/color.js';
+import { calculateScore } from '../src/score.js';
 import testVectors from '../spec/test-vectors.json';
 
 const LOG4SHELL = 'CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H';
