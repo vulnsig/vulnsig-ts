@@ -64,3 +64,12 @@ Each metric maps to a distinct visual channel:
 ## Requirements
 
 Node.js 18+
+
+
+## What Is New in VulnSig
+
+### 1.1.0
+
+Extension to the public interface.
+
+
