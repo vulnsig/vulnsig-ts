@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync, writeFileSync } from 'fs';
-import { renderGlyph, scoreToHue } from '../dist/index.js';
+import { renderGlyph } from '../dist/index.js';
+import { scoreToHue } from '../dist/color.js';
 import { arcPath, starPath, ringFill, radialCuts } from '../dist/geometry.js';
 
 const vectors = JSON.parse(readFileSync('spec/test-vectors.json', 'utf8'));
