@@ -1,12 +1,13 @@
 import type { RenderOptions } from './types.js';
-import { parseCVSS, getSeverity } from './parse.js';
+import { parseCVSS, getSeverity, detectCVSSVersion, isVersion3 } from './parse.js';
 import { calculateScore } from './score.js';
 import { scoreToHue } from './color.js';
 import { arcPath, starPath, radialCuts, ringFill } from './geometry.js';
 
 export function renderGlyph(options: RenderOptions): string {
-  const { vector, size = 120, showLabel = true } = options;
+  const { vector, size = 120 } = options;
   const metrics = parseCVSS(vector);
+  const version = detectCVSSVersion(vector);
 
   // Score precedence: explicit → auto-calculate → fallback 5.0
   let score: number;
@@ -16,17 +17,40 @@ export function renderGlyph(options: RenderOptions): string {
     score = calculateScore(vector);
   }
 
-  const { hue, sat } = scoreToHue(score);
+  const { hue, sat, light } = scoreToHue(score);
 
-  // Metric severities
+  // Metric severities - handle CVSS 3.0, 3.1, and 4.0
   const ac = getSeverity(metrics, 'AC');
-  const at = getSeverity(metrics, 'AT');
-  const vc = getSeverity(metrics, 'VC');
-  const vi = getSeverity(metrics, 'VI');
-  const va = getSeverity(metrics, 'VA');
-  const sc = getSeverity(metrics, 'SC');
-  const si = getSeverity(metrics, 'SI');
-  const sa = getSeverity(metrics, 'SA');
+
+  // For CVSS 3.0/3.1, AT doesn't exist, so always treat as solid (AT:N)
+  const at = isVersion3(version) ? 1.0 : getSeverity(metrics, 'AT');
+
+  // For CVSS 3.0/3.1, use C/I/A instead of VC/VI/VA
+  const vc = isVersion3(version) ? getSeverity(metrics, 'C') : getSeverity(metrics, 'VC');
+  const vi = isVersion3(version) ? getSeverity(metrics, 'I') : getSeverity(metrics, 'VI');
+  const va = isVersion3(version) ? getSeverity(metrics, 'A') : getSeverity(metrics, 'VA');
+
+  // For CVSS 3.0/3.1, if S:C (Changed), both bands mirror C/I/A. If S:U (Unchanged), no split.
+  let sc: number, si: number, sa: number;
+  if (isVersion3(version)) {
+    const scopeChanged = getSeverity(metrics, 'S') > 0.5; // S:C = 1.0, S:U = 0.0
+    if (scopeChanged) {
+      // Split band: both bands mirror C/I/A
+      sc = vc;
+      si = vi;
+      sa = va;
+    } else {
+      // No split
+      sc = 0;
+      si = 0;
+      sa = 0;
+    }
+  } else {
+    // CVSS 4.0: use SC/SI/SA directly
+    sc = getSeverity(metrics, 'SC');
+    si = getSeverity(metrics, 'SI');
+    sa = getSeverity(metrics, 'SA');
+  }
 
   const hasAnySub = sc > 0 || si > 0 || sa > 0;
   const atPresent = at < 0.5;
@@ -51,19 +75,19 @@ export function renderGlyph(options: RenderOptions): string {
   const cutWidthDeg = 3;
 
   const starOuterR = innerR - 2;
-  const starInnerR = starOuterR * (0.75 - ac * 0.5);
+  const starInnerR = starOuterR * (0.55 - ac * 0.35);
 
   // PR stroke
   const prRaw = metrics.PR;
-  const prStrokeWidth = prRaw === 'H' ? 2.5 : prRaw === 'L' ? 1.0 : 0;
+  const prStrokeWidth = prRaw === 'H' ? 3.2 : prRaw === 'L' ? 1.0 : 0;
 
   // UI spikes/bumps
   const uiRaw = metrics.UI;
   const spikeBase = hueRingR + ringWidth / 2 - 0.5;
 
-  // Star fill
-  const sfSat = sat * 0.85;
-  const sfLight = 35;
+  // Star fill — match the outer hue ring color
+  const sfSat = sat;
+  const sfLight = 52 * light;
   const sfAlpha = 0.85;
 
   const bgColor = `hsl(${hue}, 4%, 5%)`;
@@ -94,17 +118,17 @@ export function renderGlyph(options: RenderOptions): string {
       const a = (Math.PI * 2 * i) / petalCount - Math.PI / 2;
       const x1 = cx + Math.cos(a) * spikeBase;
       const y1 = cy + Math.sin(a) * spikeBase;
-      const x2 = cx + Math.cos(a) * (spikeBase + 4.7);
-      const y2 = cy + Math.sin(a) * (spikeBase + 4.7);
+      const x2 = cx + Math.cos(a) * (spikeBase + 3.4);
+      const y2 = cy + Math.sin(a) * (spikeBase + 3.4);
       parts.push(
-        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsla(${hue}, ${sat}%, 65%, 0.7)" stroke-width="4.5" stroke-linecap="butt"/>`,
+        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="3.0" stroke-linecap="round"/>`,
       );
     }
   }
 
   // Z-order 2: UI:P Bumps
   if (uiRaw === 'P') {
-    const bumpR = 4.7;
+    const bumpR = 4.6;
     for (let i = 0; i < petalCount; i++) {
       const a = (Math.PI * 2 * i) / petalCount - Math.PI / 2;
       const bx = cx + Math.cos(a) * spikeBase;
@@ -116,7 +140,7 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = bx + Math.cos(perpR) * bumpR;
       const y2 = by + Math.sin(perpR) * bumpR;
       parts.push(
-        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsla(${hue}, ${sat}%, 60%, 0.65)"/>`,
+        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsl(${hue}, ${sat}%, ${52 * light}%)"/>`,
       );
     }
   }
@@ -131,7 +155,7 @@ export function renderGlyph(options: RenderOptions): string {
   // Z-order 5: Star stroke (PR:N = no stroke)
   if (prStrokeWidth > 0) {
     parts.push(
-      `<path d="${starD}" fill="none" stroke="hsl(${hue}, ${sat}%, 72%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
+      `<path d="${starD}" fill="none" stroke="hsl(${hue}, ${sat}%, ${72 * light}%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
     );
   }
 
@@ -140,13 +164,13 @@ export function renderGlyph(options: RenderOptions): string {
     // Vuln band (inner)
     const vulnBandOuter = hasAnySub ? vulnOuterR : outerR;
     parts.push(
-      `<path d="${arcPath(cx, cy, vulnInnerR, vulnBandOuter, sec.s, sec.e)}" fill="${ringFill(sec.vuln, hue, sat)}"/>`,
+      `<path d="${arcPath(cx, cy, vulnInnerR, vulnBandOuter, sec.s, sec.e)}" fill="${ringFill(sec.vuln, hue, sat, light)}"/>`,
     );
 
     // Sub band (outer) — only when split
     if (hasAnySub) {
       parts.push(
-        `<path d="${arcPath(cx, cy, subInnerR, outerR, sec.s, sec.e)}" fill="${ringFill(sec.sub, hue, sat)}"/>`,
+        `<path d="${arcPath(cx, cy, subInnerR, outerR, sec.s, sec.e)}" fill="${ringFill(sec.sub, hue, sat, light)}"/>`,
       );
     }
   }
@@ -165,29 +189,8 @@ export function renderGlyph(options: RenderOptions): string {
 
   // Z-order 9: Outer hue ring
   parts.push(
-    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, 52%)" stroke-width="${ringWidth}"/>`,
+    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="${ringWidth}"/>`,
   );
-
-  // Z-order 10: Sector labels
-  if (showLabel && size >= 140) {
-    const fontSize = size >= 200 ? 8 : 6;
-    for (const sec of sectors) {
-      const midDeg = (sec.s + sec.e) / 2;
-      const midRad = (midDeg * Math.PI) / 180;
-      const labelR = hasAnySub ? (vulnInnerR + vulnOuterR) / 2 : (vulnInnerR + outerR) / 2;
-      const lx = cx + Math.cos(midRad) * labelR;
-      const ly = cy + Math.sin(midRad) * labelR;
-      const fill =
-        sec.vuln > 0.5
-          ? 'rgba(0,0,0,0.4)'
-          : sec.vuln > 0.01
-            ? 'rgba(255,255,255,0.22)'
-            : 'rgba(255,255,255,0.07)';
-      parts.push(
-        `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" fill="${fill}" font-size="${fontSize}" font-family="'JetBrains Mono', monospace" font-weight="700">${sec.key}</text>`,
-      );
-    }
-  }
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 120 120" style="overflow:visible">${parts.join('')}</svg>`;
 }

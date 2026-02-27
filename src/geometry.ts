@@ -51,19 +51,22 @@ export function radialCuts(
   const cuts: { startDeg: number; endDeg: number }[] = [];
   const sectorSpan = endDeg - startDeg;
   const step = cutWidth + gapDeg;
-  const numCuts = Math.floor(sectorSpan / step);
-  const patternSpan = numCuts * step;
+  // Number of visible segments = numCuts + 1, each gapDeg wide.
+  // Total = numCuts * cutWidth + (numCuts + 1) * gapDeg = sectorSpan
+  // Solve: numCuts = floor((sectorSpan - gapDeg) / step)
+  const numCuts = Math.floor((sectorSpan - gapDeg) / step);
+  const patternSpan = numCuts * cutWidth + (numCuts + 1) * gapDeg;
   const offset = (sectorSpan - patternSpan) / 2;
   for (let i = 0; i < numCuts; i++) {
-    const cutStart = startDeg + offset + i * step + gapDeg;
-    const cutEnd = Math.min(cutStart + cutWidth, endDeg);
+    const cutStart = startDeg + offset + (i + 1) * gapDeg + i * cutWidth;
+    const cutEnd = cutStart + cutWidth;
     cuts.push({ startDeg: cutStart, endDeg: cutEnd });
   }
   return cuts;
 }
 
-export function ringFill(magnitude: number, hue: number, sat: number): string {
-  if (magnitude <= 0.01) return `hsla(${hue}, ${sat * 0.1}%, 12%, 0.9)`;
-  if (magnitude <= 0.5) return `hsla(${hue}, ${sat * 0.5}%, 35%, 0.92)`;
-  return `hsla(${hue}, ${sat * 0.9}%, 58%, 0.95)`;
+export function ringFill(magnitude: number, hue: number, sat: number, light: number = 1): string {
+  if (magnitude <= 0.01) return `hsla(${hue}, ${sat * 0.1}%, ${12 * light}%, 0.9)`;
+  if (magnitude <= 0.5) return `hsla(${hue}, ${sat * 0.5}%, ${35 * light}%, 0.92)`;
+  return `hsla(${hue}, ${sat * 0.9}%, ${58 * light}%, 0.95)`;
 }
