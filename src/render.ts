@@ -17,7 +17,7 @@ export function renderGlyph(options: RenderOptions): string {
     score = calculateScore(vector);
   }
 
-  const { hue, sat } = scoreToHue(score);
+  const { hue, sat, light } = scoreToHue(score);
 
   // Metric severities - handle CVSS 3.0, 3.1, and 4.0
   const ac = getSeverity(metrics, 'AC');
@@ -87,7 +87,7 @@ export function renderGlyph(options: RenderOptions): string {
 
   // Star fill
   const sfSat = sat * 0.85;
-  const sfLight = 35;
+  const sfLight = 35 * light;
   const sfAlpha = 0.85;
 
   const bgColor = `hsl(${hue}, 4%, 5%)`;
@@ -121,7 +121,7 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = cx + Math.cos(a) * (spikeBase + 4.7);
       const y2 = cy + Math.sin(a) * (spikeBase + 4.7);
       parts.push(
-        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsla(${hue}, ${sat}%, 65%, 0.7)" stroke-width="4.5" stroke-linecap="butt"/>`,
+        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsla(${hue}, ${sat}%, ${65 * light}%, 0.7)" stroke-width="4.5" stroke-linecap="butt"/>`,
       );
     }
   }
@@ -140,7 +140,7 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = bx + Math.cos(perpR) * bumpR;
       const y2 = by + Math.sin(perpR) * bumpR;
       parts.push(
-        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsla(${hue}, ${sat}%, 60%, 0.65)"/>`,
+        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsla(${hue}, ${sat}%, ${60 * light}%, 0.65)"/>`,
       );
     }
   }
@@ -155,7 +155,7 @@ export function renderGlyph(options: RenderOptions): string {
   // Z-order 5: Star stroke (PR:N = no stroke)
   if (prStrokeWidth > 0) {
     parts.push(
-      `<path d="${starD}" fill="none" stroke="hsl(${hue}, ${sat}%, 72%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
+      `<path d="${starD}" fill="none" stroke="hsl(${hue}, ${sat}%, ${72 * light}%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
     );
   }
 
@@ -164,13 +164,13 @@ export function renderGlyph(options: RenderOptions): string {
     // Vuln band (inner)
     const vulnBandOuter = hasAnySub ? vulnOuterR : outerR;
     parts.push(
-      `<path d="${arcPath(cx, cy, vulnInnerR, vulnBandOuter, sec.s, sec.e)}" fill="${ringFill(sec.vuln, hue, sat)}"/>`,
+      `<path d="${arcPath(cx, cy, vulnInnerR, vulnBandOuter, sec.s, sec.e)}" fill="${ringFill(sec.vuln, hue, sat, light)}"/>`,
     );
 
     // Sub band (outer) — only when split
     if (hasAnySub) {
       parts.push(
-        `<path d="${arcPath(cx, cy, subInnerR, outerR, sec.s, sec.e)}" fill="${ringFill(sec.sub, hue, sat)}"/>`,
+        `<path d="${arcPath(cx, cy, subInnerR, outerR, sec.s, sec.e)}" fill="${ringFill(sec.sub, hue, sat, light)}"/>`,
       );
     }
   }
@@ -189,7 +189,7 @@ export function renderGlyph(options: RenderOptions): string {
 
   // Z-order 9: Outer hue ring
   parts.push(
-    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, 52%)" stroke-width="${ringWidth}"/>`,
+    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="${ringWidth}"/>`,
   );
 
   // Z-order 10: Sector labels

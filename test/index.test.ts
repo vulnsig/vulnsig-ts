@@ -93,7 +93,7 @@ describe('isVersion3', () => {
 
 describe('scoreToHue', () => {
   it('returns yellow for score 0', () => {
-    expect(scoreToHue(0).hue).toBe(45);
+    expect(scoreToHue(0).hue).toBe(55);
   });
 
   it('returns dark red for score 10', () => {

@@ -406,6 +406,20 @@
     }
   },
   {
+    "name": "Synth: Minimal (score ~1)",
+    "cve": "Synthesized",
+    "score": 1.0,
+    "vector": "CVSS:4.0/AV:P/AC:H/AT:P/PR:H/UI:A/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+    "expect": {
+      "starPoints": 3,
+      "segmented": true,
+      "splitBand": false,
+      "spikes": "none",
+      "bumps": false,
+      "prStroke": "thick"
+    }
+  },
+  {
     "name": "Synth: Hexagon+Bumps",
     "cve": "Synthesized",
     "score": 5.1,

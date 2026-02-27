@@ -32,4 +32,5 @@ export interface ParsedMetrics {
 export interface HueResult {
   hue: number;
   sat: number;
+  light: number; // multiplier: >1 lighter (low scores), <1 darker (high scores)
 }
