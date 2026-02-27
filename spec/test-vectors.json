@@ -432,5 +432,89 @@
       "bumps": true,
       "prStroke": "none"
     }
+  },
+  {
+    "name": "Log4Shell (3.1)",
+    "cve": "CVE-2021-44228",
+    "score": 10.0,
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+    "expect": {
+      "starPoints": 8,
+      "segmented": false,
+      "splitBand": true,
+      "spikes": "long",
+      "bumps": false,
+      "prStroke": "thin"
+    }
+  },
+  {
+    "name": "Heartbleed (3.1)",
+    "cve": "CVE-2014-0160",
+    "score": 7.5,
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "expect": {
+      "starPoints": 8,
+      "segmented": false,
+      "splitBand": false,
+      "spikes": "long",
+      "bumps": false,
+      "prStroke": "thin"
+    }
+  },
+  {
+    "name": "Dirty COW (3.1)",
+    "cve": "CVE-2016-5195",
+    "score": 7.1,
+    "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+    "expect": {
+      "starPoints": 4,
+      "segmented": false,
+      "splitBand": false,
+      "spikes": "long",
+      "bumps": false,
+      "prStroke": "medium"
+    }
+  },
+  {
+    "name": "XSS Reflected (3.1)",
+    "cve": "Example",
+    "score": 6.1,
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "expect": {
+      "starPoints": 8,
+      "segmented": false,
+      "splitBand": true,
+      "spikes": "none",
+      "bumps": false,
+      "prStroke": "thin"
+    }
+  },
+  {
+    "name": "Heartbleed (3.0)",
+    "cve": "CVE-2014-0160",
+    "score": 7.5,
+    "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "expect": {
+      "starPoints": 8,
+      "segmented": false,
+      "splitBand": false,
+      "spikes": "long",
+      "bumps": false,
+      "prStroke": "thin"
+    }
+  },
+  {
+    "name": "XSS Reflected (3.0)",
+    "cve": "Example",
+    "score": 6.1,
+    "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "expect": {
+      "starPoints": 8,
+      "segmented": false,
+      "splitBand": true,
+      "spikes": "none",
+      "bumps": false,
+      "prStroke": "thin"
+    }
   }
 ]
