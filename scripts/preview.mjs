@@ -208,7 +208,7 @@ const html = `<!DOCTYPE html>
 </style>
 </head>
 <body>
-  <h1>Threatprint Preview</h1>
+  <h1>VulnSig Preview</h1>
   <div class="subtitle">Generated from spec/test-vectors.json &mdash; ${new Date().toISOString().slice(0, 19)}</div>
 
   <div class="index">

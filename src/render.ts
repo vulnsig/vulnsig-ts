@@ -118,8 +118,8 @@ export function renderGlyph(options: RenderOptions): string {
       const a = (Math.PI * 2 * i) / petalCount - Math.PI / 2;
       const x1 = cx + Math.cos(a) * spikeBase;
       const y1 = cy + Math.sin(a) * spikeBase;
-      const x2 = cx + Math.cos(a) * (spikeBase + 4.7);
-      const y2 = cy + Math.sin(a) * (spikeBase + 4.7);
+      const x2 = cx + Math.cos(a) * (spikeBase + 6.0);
+      const y2 = cy + Math.sin(a) * (spikeBase + 6.0);
       parts.push(
         `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="4.5" stroke-linecap="butt"/>`,
       );
@@ -128,7 +128,7 @@ export function renderGlyph(options: RenderOptions): string {
 
   // Z-order 2: UI:P Bumps
   if (uiRaw === 'P') {
-    const bumpR = 4.7;
+    const bumpR = 4.6;
     for (let i = 0; i < petalCount; i++) {
       const a = (Math.PI * 2 * i) / petalCount - Math.PI / 2;
       const bx = cx + Math.cos(a) * spikeBase;
