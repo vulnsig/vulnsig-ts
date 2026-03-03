@@ -67,6 +67,6 @@ export function radialCuts(
 
 export function ringFill(magnitude: number, hue: number, sat: number, light: number = 1): string {
   if (magnitude <= 0.01) return `hsla(${hue}, ${sat}%, ${52 * light}%, 0.125)`;
-  if (magnitude <= 0.5) return `hsl(${hue}, ${sat}%, ${52 * light}%, 0.5)`;
+  if (magnitude <= 0.5) return `hsla(${hue}, ${sat}%, ${52 * light}%, 0.5)`;
   return `hsl(${hue}, ${sat}%, ${52 * light}%)`;
 }

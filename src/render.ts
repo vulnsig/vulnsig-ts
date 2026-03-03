@@ -90,8 +90,6 @@ export function renderGlyph(options: RenderOptions): string {
   const sfLight = 52 * light;
   const sfAlpha = 0.85;
 
-  const bgColor = `hsl(${hue}, 4%, 5%)`;
-
   // Deterministic gradient ID from vector hash
   const gradId = 'sg-' + simpleHash(vector);
 
@@ -159,7 +157,29 @@ export function renderGlyph(options: RenderOptions): string {
     );
   }
 
-  // Z-order 6 & 7: CIA ring sectors
+  // Z-order 6 & 7: CIA ring sectors (with AT:P clip-path if segmented)
+  if (atPresent) {
+    // Build a clip-path that keeps only the visible segments (gaps between cuts)
+    const clipId = 'at-' + simpleHash(vector);
+    let clipPaths = '';
+    for (const sec of sectors) {
+      const cuts = radialCuts(sec.s, sec.e, cutWidthDeg, cutGapDeg);
+      // Visible segments are the gaps between cuts
+      let prevEnd = sec.s;
+      for (const cut of cuts) {
+        if (cut.startDeg > prevEnd) {
+          clipPaths += `<path d="${arcPath(cx, cy, vulnInnerR - 1, outerR + 1, prevEnd, cut.startDeg)}"/>`;
+        }
+        prevEnd = cut.endDeg;
+      }
+      if (prevEnd < sec.e) {
+        clipPaths += `<path d="${arcPath(cx, cy, vulnInnerR - 1, outerR + 1, prevEnd, sec.e)}"/>`;
+      }
+    }
+    parts.push(`<clipPath id="${clipId}">${clipPaths}</clipPath>`);
+    parts.push(`<g clip-path="url(#${clipId})">`);
+  }
+
   for (const sec of sectors) {
     // Vuln band (inner)
     const vulnBandOuter = hasAnySub ? vulnOuterR : outerR;
@@ -175,16 +195,8 @@ export function renderGlyph(options: RenderOptions): string {
     }
   }
 
-  // Z-order 8: AT:P radial cuts
   if (atPresent) {
-    for (const sec of sectors) {
-      const cuts = radialCuts(sec.s, sec.e, cutWidthDeg, cutGapDeg);
-      for (const cut of cuts) {
-        parts.push(
-          `<path d="${arcPath(cx, cy, vulnInnerR - 0.5, outerR + 0.5, cut.startDeg, cut.endDeg)}" fill="${bgColor}"/>`,
-        );
-      }
-    }
+    parts.push(`</g>`);
   }
 
   // Z-order 9: Outer hue ring
