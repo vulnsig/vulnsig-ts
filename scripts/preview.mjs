@@ -534,9 +534,70 @@ const html = `<!DOCTYPE html>
     word-break: break-all;
     line-height: 1.4;
   }
+
+  /* --- Theme toggle --- */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: #94a3b8;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover {
+    background: rgba(255,255,255,0.14);
+  }
+
+  /* --- Light mode --- */
+  body.light {
+    background: #f1f5f9;
+    color: #1e293b;
+  }
+  body.light .theme-toggle {
+    border-color: rgba(0,0,0,0.15);
+    background: rgba(0,0,0,0.06);
+    color: #475569;
+  }
+  body.light .theme-toggle:hover {
+    background: rgba(0,0,0,0.1);
+  }
+  body.light h1 {
+    background: linear-gradient(135deg, hsl(190,60%,35%), hsl(280,60%,40%), hsl(350,70%,40%), hsl(20,80%,40%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  body.light .subtitle { color: #64748b; }
+  body.light .index { border-bottom-color: rgba(0,0,0,0.08); }
+  body.light .index-item:hover { background: rgba(0,0,0,0.05); }
+  body.light .index-name { color: #334155; }
+  body.light .index-score { color: #7c3aed; }
+  body.light .section-title { color: #475569; }
+  body.light .card {
+    background: rgba(0,0,0,0.02);
+    border-color: rgba(0,0,0,0.08);
+  }
+  body.light .name { color: #1e293b; }
+  body.light .score { color: #7c3aed; }
+  body.light .cve { color: #64748b; }
+  body.light .tag {
+    background: rgba(99,102,241,0.08);
+    color: #6366f1;
+    border-color: rgba(99,102,241,0.2);
+  }
+  body.light .size-label { color: #64748b; }
+  body.light .vector { color: #94a3b8; }
 </style>
 </head>
 <body>
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light'); this.textContent = document.body.classList.contains('light') ? 'Dark' : 'Light'">Light</button>
   <h1>VulnSig Preview</h1>
   <div class="subtitle">Generated from spec/test-vectors.json &mdash; ${new Date().toISOString().slice(0, 19)}</div>
 

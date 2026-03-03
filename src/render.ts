@@ -145,8 +145,8 @@ export function renderGlyph(options: RenderOptions): string {
     }
   }
 
-  // Z-order 3: Background circle
-  parts.push(`<circle cx="${cx}" cy="${cy}" r="${innerR}" fill="${bgColor}"/>`);
+  // Z-order 3: Background circle (transparent)
+  parts.push(`<circle cx="${cx}" cy="${cy}" r="${innerR}" fill="none"/>`);
 
   // Z-order 4: Star fill
   const starD = starPath(cx, cy, petalCount, starOuterR, starInnerR);
