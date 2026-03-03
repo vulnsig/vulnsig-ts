@@ -68,6 +68,10 @@ Node.js 18+
 
 ## What Is New in VulnSig
 
+### 1.2.0
+
+Improved glyph rendering over diverse backgrounds.
+
 ### 1.1.0
 
 Extension to the public interface.
