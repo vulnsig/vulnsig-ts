@@ -25,6 +25,8 @@ export interface ParsedMetrics {
   I?: 'H' | 'L' | 'N';
   A?: 'H' | 'L' | 'N';
   S?: 'C' | 'U'; // Scope: Changed or Unchanged
+  // CVSS 4.0 threat metric
+  E?: 'A' | 'P' | 'U' | 'X';
 }
 
 export interface HueResult {

@@ -146,6 +146,28 @@ export function renderGlyph(options: RenderOptions): string {
   // Z-order 3: Background circle (transparent)
   parts.push(`<circle cx="${cx}" cy="${cy}" r="${innerR}" fill="none"/>`);
 
+  // Z-order 3.5: E (Exploit Maturity) circle — CVSS 4.0 only, behind the star
+  const eRaw = isVersion3(version) ? undefined : metrics.E;
+  if (eRaw && eRaw !== 'X') {
+    const eOpacity = eRaw === 'U' ? 0.3 : 0.7;
+    const eCircleR = innerR - ringGap;
+    const eColor = `hsla(${hue}, ${sat}%, ${52 * light}%, ${eOpacity})`;
+    if (eRaw === 'A') {
+      parts.push(`<circle cx="${cx}" cy="${cy}" r="${eCircleR}" fill="${eColor}"/>`);
+    } else {
+      // E:P → stroke-width = ringWidth; E:U → stroke-width = ringWidth / 2
+      const sw = eRaw === 'P' ? ringWidth : ringWidth / 2;
+      const step = sw + ringGap;
+      let r = eCircleR - sw / 2;
+      while (r - sw / 2 > 0) {
+        parts.push(
+          `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${eColor}" stroke-width="${sw}"/>`,
+        );
+        r -= step;
+      }
+    }
+  }
+
   // Z-order 4: Star fill
   const starD = starPath(cx, cy, petalCount, starOuterR, starInnerR);
   parts.push(`<path d="${starD}" fill="url(#${gradId})" stroke="none"/>`);
