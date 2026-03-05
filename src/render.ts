@@ -79,7 +79,7 @@ export function renderGlyph(options: RenderOptions): string {
 
   // PR stroke
   const prRaw = metrics.PR;
-  const prStrokeWidth = prRaw === 'H' ? 3.2 : prRaw === 'L' ? 1.0 : 0;
+  const prStrokeWidth = prRaw === 'H' ? 3.5 : prRaw === 'L' ? 1.5 : 0;
 
   // UI spikes/bumps
   const uiRaw = metrics.UI;
@@ -88,7 +88,7 @@ export function renderGlyph(options: RenderOptions): string {
   // Star fill — match the outer hue ring color
   const sfSat = sat;
   const sfLight = 52 * light;
-  const sfAlpha = 0.85;
+  const sfAlpha = 1;
 
   // Deterministic gradient ID from vector hash
   const gradId = 'sg-' + simpleHash(vector);
@@ -103,9 +103,11 @@ export function renderGlyph(options: RenderOptions): string {
   const parts: string[] = [];
 
   // Defs
-  parts.push(`<defs><radialGradient id="${gradId}" cx="50%" cy="50%" r="50%">`);
   parts.push(
-    `<stop offset="0%" stop-color="hsla(${hue}, ${sfSat * 1.1}%, ${sfLight + 6}%, ${Math.min(1, sfAlpha + 0.1)})"/>`,
+    `<defs><radialGradient id="${gradId}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${starOuterR}">`,
+  );
+  parts.push(
+    `<stop offset="0%" stop-color="hsla(${hue}, ${sfSat * 1.1}%, ${sfLight + 10}%, ${sfAlpha})"/>`,
   );
   parts.push(`<stop offset="100%" stop-color="hsla(${hue}, ${sfSat}%, ${sfLight}%, ${sfAlpha})"/>`);
   parts.push(`</radialGradient></defs>`);
@@ -119,7 +121,7 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = cx + Math.cos(a) * (spikeBase + 3.4);
       const y2 = cy + Math.sin(a) * (spikeBase + 3.4);
       parts.push(
-        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="3.0" stroke-linecap="round"/>`,
+        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsl(${hue}, ${sat}%, ${sfLight}%)" stroke-width="3.0" stroke-linecap="round"/>`,
       );
     }
   }
@@ -138,13 +140,40 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = bx + Math.cos(perpR) * bumpR;
       const y2 = by + Math.sin(perpR) * bumpR;
       parts.push(
-        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsl(${hue}, ${sat}%, ${52 * light}%)"/>`,
+        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsl(${hue}, ${sat}%, ${sfLight}%)"/>`,
       );
     }
   }
 
   // Z-order 3: Background circle (transparent)
   parts.push(`<circle cx="${cx}" cy="${cy}" r="${innerR}" fill="none"/>`);
+
+  // Z-order 3.5: E (Exploit Maturity) marker — CVSS 4.0 only, behind the star
+  // A (Attacked) → concentric rings at 0.5 opacity
+  // P (PoC)      → solid filled circle at 0.3 opacity
+  // U / X        → no marker
+  const eRaw = isVersion3(version) ? undefined : metrics.E;
+  if (eRaw === 'A' || eRaw === 'P') {
+    const eCircleR = innerR - ringGap;
+    const eRingGap = ringGap * 3;
+    if (eRaw === 'A') {
+      const eColor = `hsla(${hue}, ${sat}%, ${sfLight}%, 0.5)`;
+      const sw = ringWidth;
+      const step = sw + eRingGap;
+      let r = eCircleR - sw / 2;
+      while (r - sw / 2 > 0) {
+        parts.push(
+          `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${eColor}" stroke-width="${sw}"/>`,
+        );
+        r -= step;
+      }
+    } else {
+      // E:P → solid filled circle
+      parts.push(
+        `<circle cx="${cx}" cy="${cy}" r="${eCircleR}" fill="hsla(${hue}, ${sat}%, ${sfLight}%, 0.375)"/>`,
+      );
+    }
+  }
 
   // Z-order 4: Star fill
   const starD = starPath(cx, cy, petalCount, starOuterR, starInnerR);
@@ -153,7 +182,7 @@ export function renderGlyph(options: RenderOptions): string {
   // Z-order 5: Star stroke (PR:N = no stroke)
   if (prStrokeWidth > 0) {
     parts.push(
-      `<path d="${starD}" fill="none" stroke="hsl(${hue}, ${sat}%, ${72 * light}%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
+      `<path d="${starD}" fill="none" stroke="hsl(${(hue + 10) % 360}, ${sat * 0.8}%, ${sfLight + 10}%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
     );
   }
 
@@ -201,7 +230,7 @@ export function renderGlyph(options: RenderOptions): string {
 
   // Z-order 9: Outer hue ring
   parts.push(
-    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="${ringWidth}"/>`,
+    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, ${sfLight}%)" stroke-width="${ringWidth}"/>`,
   );
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 120 120" style="overflow:visible">${parts.join('')}</svg>`;
