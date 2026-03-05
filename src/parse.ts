@@ -17,6 +17,8 @@ export const METRIC_DEFS: Record<string, { severity: Record<string, number> }> =
   I: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
   A: { severity: { H: 1.0, L: 0.5, N: 0.0 } },
   S: { severity: { C: 1.0, U: 0.0 } }, // Scope: Changed or Unchanged
+  // CVSS 4.0 threat metric
+  E: { severity: { A: 1.0, P: 0.6, U: 0.2, X: 0.0 } },
 };
 
 export function parseCVSS(vector: string): ParsedMetrics {
