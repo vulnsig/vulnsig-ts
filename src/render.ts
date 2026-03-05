@@ -121,7 +121,7 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = cx + Math.cos(a) * (spikeBase + 3.4);
       const y2 = cy + Math.sin(a) * (spikeBase + 3.4);
       parts.push(
-        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="3.0" stroke-linecap="round"/>`,
+        `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="hsl(${hue}, ${sat}%, ${sfLight}%)" stroke-width="3.0" stroke-linecap="round"/>`,
       );
     }
   }
@@ -140,7 +140,7 @@ export function renderGlyph(options: RenderOptions): string {
       const x2 = bx + Math.cos(perpR) * bumpR;
       const y2 = by + Math.sin(perpR) * bumpR;
       parts.push(
-        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsl(${hue}, ${sat}%, ${52 * light}%)"/>`,
+        `<path d="M${x1},${y1} A${bumpR},${bumpR} 0 0,1 ${x2},${y2} Z" fill="hsl(${hue}, ${sat}%, ${sfLight}%)"/>`,
       );
     }
   }
@@ -157,7 +157,7 @@ export function renderGlyph(options: RenderOptions): string {
     const eCircleR = innerR - ringGap;
     const eRingGap = ringGap * 3;
     if (eRaw === 'A') {
-      const eColor = `hsla(${hue}, ${sat}%, ${52 * light}%, 0.5)`;
+      const eColor = `hsla(${hue}, ${sat}%, ${sfLight}%, 0.5)`;
       const sw = ringWidth;
       const step = sw + eRingGap;
       let r = eCircleR - sw / 2;
@@ -170,7 +170,7 @@ export function renderGlyph(options: RenderOptions): string {
     } else {
       // E:P → solid filled circle
       parts.push(
-        `<circle cx="${cx}" cy="${cy}" r="${eCircleR}" fill="hsla(${hue}, ${sat}%, ${52 * light}%, 0.375)"/>`,
+        `<circle cx="${cx}" cy="${cy}" r="${eCircleR}" fill="hsla(${hue}, ${sat}%, ${sfLight}%, 0.375)"/>`,
       );
     }
   }
@@ -182,7 +182,7 @@ export function renderGlyph(options: RenderOptions): string {
   // Z-order 5: Star stroke (PR:N = no stroke)
   if (prStrokeWidth > 0) {
     parts.push(
-      `<path d="${starD}" fill="none" stroke="hsl(${(hue + 10) % 360}, ${sat * 0.8}%, ${52 * light + 10}%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
+      `<path d="${starD}" fill="none" stroke="hsl(${(hue + 10) % 360}, ${sat * 0.8}%, ${sfLight + 10}%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
     );
   }
 
@@ -230,7 +230,7 @@ export function renderGlyph(options: RenderOptions): string {
 
   // Z-order 9: Outer hue ring
   parts.push(
-    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, ${52 * light}%)" stroke-width="${ringWidth}"/>`,
+    `<circle cx="${cx}" cy="${cy}" r="${hueRingR}" fill="none" stroke="hsl(${hue}, ${sat}%, ${sfLight}%)" stroke-width="${ringWidth}"/>`,
   );
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 120 120" style="overflow:visible">${parts.join('')}</svg>`;
