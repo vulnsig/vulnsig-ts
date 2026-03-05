@@ -68,6 +68,12 @@ Node.js 18+
 
 ## What Is New in VulnSig
 
+### 1.3.0
+
+Added rendering of Exploit Maturity.
+
+Improved rendering of PR.
+
 ### 1.2.0
 
 Improved glyph rendering over diverse backgrounds.
