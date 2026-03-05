@@ -28,6 +28,30 @@ function swatch(color, border = '') {
 
 // Fixed legend colors
 const sh = 10, ss = 75, sl = 1;
+
+function exploitMaturitySvg(e) {
+  const cx = 20, cy = 20;
+  const eCircleR = 13;
+  const eOpacity = e === 'U' ? 0.3 : 0.5;
+  const eColor = `hsla(${sh}, ${ss}%, 52%, ${eOpacity})`;
+  let content = '';
+  if (e === 'A') {
+    const sw = 2.2;
+    const step = sw + 1.5;
+    let r = eCircleR - sw / 2;
+    while (r - sw / 2 > 0) {
+      content += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${eColor}" stroke-width="${sw}"/>`;
+      r -= step;
+    }
+  } else if (e === 'P') {
+    content = `<circle cx="${cx}" cy="${cy}" r="${eCircleR}" fill="hsla(${sh}, ${ss}%, 52%, 0.3)"/>`;
+  }
+  return `<svg width="40" height="40" viewBox="0 0 40 40" style="overflow:visible">
+    <circle cx="${cx}" cy="${cy}" r="19" fill="${bgC}" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+    ${content}
+    ${miniStar(cx, cy, 8, 9, 3, 'hsla(10,5%,14%,0.8)', 'rgba(255,255,255,0.2)')}
+  </svg>`;
+}
 const bgC = `hsl(${sh}, 4%, 5%)`;
 
 // --- Build legend sections ---
@@ -280,6 +304,26 @@ function buildLegend() {
     <div style="font-size:8px;color:#334155;margin-top:8px;line-height:1.4">Long spikes = auto-exploitable &middot; Bumps = passive trigger &middot; Smooth = deliberate action needed</div>
   </div>`;
 
+  // 9. Exploit Maturity (E)
+  const eItems = [
+    { e: 'A', label: 'Attacked', desc: 'Active exploitation — concentric rings' },
+    { e: 'P', label: 'PoC', desc: 'Proof-of-concept — filled circle' },
+    { e: 'U', label: 'Unreported', desc: 'No known exploitation — no marker' },
+    { e: 'X', label: 'Not Defined', desc: 'Omitted or default — no marker' },
+  ].map(({ e, label, desc }) => `
+    <div style="text-align:center;flex:1">
+      ${exploitMaturitySvg(e)}
+      <div style="font-size:8px;font-weight:600;color:#cbd5e1;margin-top:2px">${valueTag(e)} ${label}</div>
+      <div style="font-size:7px;color:#475569;line-height:1.3;margin-top:2px">${desc}</div>
+    </div>`).join('');
+
+  const eSection = `${sectionStart}
+    <div style="${headStyle}">Background Marker &mdash; Exploit Maturity (CVSS 4.0)</div>
+    <div style="${descStyle}">${metricTag('E', '#f43f5e')} is an optional threat metric. A marker appears behind the star to indicate how actively exploited the vulnerability is in the wild.</div>
+    <div style="display:flex;gap:10px;justify-content:center">${eItems}</div>
+    <div style="font-size:8px;color:#334155;margin-top:8px;line-height:1.4">Concentric rings = actively attacked &middot; Filled circle = PoC available &middot; No marker = unreported or not defined</div>
+  </div>`;
+
   // Summary table
   const summaryRows = [
     ['Ring brightness', 'VC, VI, VA / SC, SI, SA', 'Impact per CIA dimension'],
@@ -292,6 +336,7 @@ function buildLegend() {
     ['Star outline', 'PR', 'Privileges required (thin&rarr;thick)'],
     ['Star fill', 'CVSS Base Score', 'Score color at full intensity'],
     ['Spike style', 'UI', 'User interaction (spikes/bumps/none)'],
+    ['Background marker', 'E', 'Exploit maturity — CVSS 4.0 only (filled/rings/none)'],
   ].map(([visual, metrics, meaning], i) => `
     <div style="display:flex;gap:8px;border-bottom:${i < 9 ? '1px solid rgba(255,255,255,0.03)' : 'none'};padding-bottom:2px">
       <span style="width:130px;min-width:130px;color:#94a3b8;font-weight:600;font-size:8px">${visual}</span>
@@ -316,6 +361,7 @@ function buildLegend() {
     ${acSection}
     ${prSection}
     ${uiSection}
+    ${eSection}
     ${summarySection}
   </div>`;
 }
@@ -362,6 +408,7 @@ const cards = vectors
     if (tv.expect.segmented) tags.push('segmented');
     if (tv.expect.bumps) tags.push('bumps');
     if (tv.expect.spikes === 'long') tags.push('spikes');
+    if (tv.expect.exploitMaturity && tv.expect.exploitMaturity !== 'X') tags.push(`E:${tv.expect.exploitMaturity}`);
     tags.push(`${tv.expect.starPoints}-pt`);
     tags.push(tv.expect.prStroke);
 

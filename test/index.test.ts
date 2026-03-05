@@ -237,38 +237,35 @@ describe('renderGlyph', () => {
     expect(svg).toContain('</svg>');
   });
 
-  it('renders E:A as a filled circle behind the star', () => {
+  it('renders E:A as concentric rings behind the star', () => {
     const svg = renderGlyph({ vector: LOG4SHELL_E_A, score: 10 });
     expect(svg).toContain('<svg');
-    // E:A should produce a filled circle element
+    expect(svg).toMatch(/<circle[^>]*stroke="hsla\(/);
+  });
+
+  it('renders E:P as a solid filled circle behind the star', () => {
+    const svg = renderGlyph({ vector: LOG4SHELL_E_P, score: 10 });
+    expect(svg).toContain('<svg');
     expect(svg).toMatch(/<circle[^>]*fill="hsla\(/);
   });
 
-  it('renders E:P as concentric rings behind the star', () => {
-    const svg = renderGlyph({ vector: LOG4SHELL_E_P, score: 10 });
-    expect(svg).toContain('<svg');
-    // E:P should produce circle elements with stroke
-    expect(svg).toMatch(/<circle[^>]*stroke="hsla\(/);
-  });
-
-  it('renders E:U as thinner concentric rings behind the star', () => {
+  it('renders E:U with no marker', () => {
     const svg = renderGlyph({ vector: LOG4SHELL_E_U, score: 10 });
     expect(svg).toContain('<svg');
-    // E:U should produce circle elements with stroke
-    expect(svg).toMatch(/<circle[^>]*stroke="hsla\(/);
-  });
-
-  it('renders E:X with no E circle (same as base vector)', () => {
-    const svgX = renderGlyph({ vector: LOG4SHELL_E_X, score: 10 });
-    // E:X adds no circle marker — neither a filled E circle nor stroked E rings
-    expect(svgX).toContain('<svg');
-    expect(svgX).not.toMatch(/<circle[^>]*fill="hsla\(/);
-    expect(svgX).not.toMatch(/<circle[^>]*stroke="hsla\(/);
-  });
-
-  it('does not render E circle for CVSS 3.x vectors', () => {
-    const svg = renderGlyph({ vector: CVSS31_LOG4SHELL });
-    // CVSS 3.x should not render any E circle
     expect(svg).not.toMatch(/<circle[^>]*fill="hsla\(/);
+    expect(svg).not.toMatch(/<circle[^>]*stroke="hsla\(/);
+  });
+
+  it('renders E:X with no marker', () => {
+    const svg = renderGlyph({ vector: LOG4SHELL_E_X, score: 10 });
+    expect(svg).toContain('<svg');
+    expect(svg).not.toMatch(/<circle[^>]*fill="hsla\(/);
+    expect(svg).not.toMatch(/<circle[^>]*stroke="hsla\(/);
+  });
+
+  it('does not render E marker for CVSS 3.x vectors', () => {
+    const svg = renderGlyph({ vector: CVSS31_LOG4SHELL });
+    expect(svg).not.toMatch(/<circle[^>]*fill="hsla\(/);
+    expect(svg).not.toMatch(/<circle[^>]*stroke="hsla\(/);
   });
 });
