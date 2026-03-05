@@ -149,7 +149,7 @@ export function renderGlyph(options: RenderOptions): string {
   // Z-order 3.5: E (Exploit Maturity) circle — CVSS 4.0 only, behind the star
   const eRaw = isVersion3(version) ? undefined : metrics.E;
   if (eRaw && eRaw !== 'X') {
-    const eOpacity = eRaw === 'U' ? 0.5 : 0.7;
+    const eOpacity = eRaw === 'U' ? 0.3 : 0.5;
     const eCircleR = innerR - ringGap;
     const eColor = `hsla(${hue}, ${sat}%, ${52 * light}%, ${eOpacity})`;
     if (eRaw === 'A') {
