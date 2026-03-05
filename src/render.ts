@@ -79,7 +79,7 @@ export function renderGlyph(options: RenderOptions): string {
 
   // PR stroke
   const prRaw = metrics.PR;
-  const prStrokeWidth = prRaw === 'H' ? 3.0 : prRaw === 'L' ? 1.0 : 0;
+  const prStrokeWidth = prRaw === 'H' ? 3.5 : prRaw === 'L' ? 1.5 : 0;
 
   // UI spikes/bumps
   const uiRaw = metrics.UI;
@@ -156,9 +156,8 @@ export function renderGlyph(options: RenderOptions): string {
   if (eRaw === 'A' || eRaw === 'P') {
     const eCircleR = innerR - ringGap;
     const eRingGap = ringGap * 3;
-    const eAlpha = 0.5;
     if (eRaw === 'A') {
-      const eColor = `hsla(${hue}, ${sat}%, ${52 * light}%, ${eAlpha})`;
+      const eColor = `hsla(${hue}, ${sat}%, ${52 * light}%, 0.5)`;
       const sw = ringWidth;
       const step = sw + eRingGap;
       let r = eCircleR - sw / 2;
@@ -171,7 +170,7 @@ export function renderGlyph(options: RenderOptions): string {
     } else {
       // E:P → solid filled circle
       parts.push(
-        `<circle cx="${cx}" cy="${cy}" r="${eCircleR}" fill="hsla(${hue}, ${sat}%, ${52 * light}%, ${eAlpha})"/>`,
+        `<circle cx="${cx}" cy="${cy}" r="${eCircleR}" fill="hsla(${hue}, ${sat}%, ${52 * light}%, 0.375)"/>`,
       );
     }
   }
@@ -183,7 +182,7 @@ export function renderGlyph(options: RenderOptions): string {
   // Z-order 5: Star stroke (PR:N = no stroke)
   if (prStrokeWidth > 0) {
     parts.push(
-      `<path d="${starD}" fill="none" stroke="hsl(${hue}, ${sat * 0.8}%, ${70 * light}%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
+      `<path d="${starD}" fill="none" stroke="hsl(${(hue + 10) % 360}, ${sat * 0.8}%, ${52 * light + 10}%)" stroke-width="${prStrokeWidth}" stroke-linejoin="round"/>`,
     );
   }
 
