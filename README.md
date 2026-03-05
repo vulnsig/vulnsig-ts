@@ -4,6 +4,9 @@ Render CVSS vulnerability vectors as expressive SVG glyphs. Each glyph encodes a
 
 Supports CVSS 4.0, 3.1, and 3.0.
 
+Visit [vulnsig.io](https://vulnsig.io) to interactively explore CVSS glyph configurations and recent or well-known CVE vector glyphs.
+
+
 ## Install
 
 ```bash
@@ -64,6 +67,8 @@ Each metric maps to a distinct visual channel:
 ## Requirements
 
 Node.js 18+
+
+
 
 
 ## What Is New in VulnSig
