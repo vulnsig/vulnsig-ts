@@ -326,6 +326,22 @@ describe('CVSS 2.0', () => {
     expect(m.Au).toBe('S');
   });
 
+  it('accepts v2 vector wrapped in outer parentheses', () => {
+    const wrapped = '(AV:N/AC:M/Au:N/C:N/I:P/A:N)';
+    expect(detectCVSSVersion(wrapped)).toBe('2.0');
+    const m = parseCVSS(wrapped);
+    expect(m.AV).toBe('N');
+    expect(m.AC).toBe('M');
+    expect(m.Au).toBe('N');
+    expect(m.C).toBe('N');
+    expect(m.I).toBe('P');
+    expect(m.A).toBe('N');
+    // Parens-wrapped scores match the unwrapped equivalent.
+    expect(calculateScore(wrapped)).toBeCloseTo(calculateScore('AV:N/AC:M/Au:N/C:N/I:P/A:N'), 1);
+    const svg = renderGlyph({ vector: wrapped });
+    expect(svg).toMatch(/^<svg /);
+  });
+
   it('scores Heartbleed v2 as 5.0', () => {
     expect(calculateScore(CVSS2_HEARTBLEED)).toBeCloseTo(5.0, 1);
   });

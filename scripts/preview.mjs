@@ -371,12 +371,20 @@ function cvssVersion(vector) {
   if (vector.startsWith('CVSS:4.0/')) return '4.0';
   if (vector.startsWith('CVSS:3.1/')) return '3.1';
   if (vector.startsWith('CVSS:3.0/')) return '3.0';
+  if (vector.startsWith('CVSS:2.0/')) return '2.0';
+  // Bare CVSS 2.0 vectors include the Au metric.
+  if (!vector.startsWith('CVSS:') && /(?:^|\/)Au:/.test(vector)) return '2.0';
   return '?';
 }
 
 function versionBadge(vector) {
   const ver = cvssVersion(vector);
-  const color = ver === '4.0' ? '#6366f1' : ver === '3.1' ? '#0ea5e9' : '#14b8a6';
+  const color =
+    ver === '4.0' ? '#6366f1' :
+    ver === '3.1' ? '#0ea5e9' :
+    ver === '3.0' ? '#14b8a6' :
+    ver === '2.0' ? '#a855f7' :
+    '#64748b';
   return `<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:${color}22;color:${color};border:1px solid ${color}44;font-weight:600">v${ver}</span>`;
 }
 
