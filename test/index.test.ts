@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderGlyph } from '../src/index.js';
-import { parseCVSS, detectCVSSVersion, isVersion3 } from '../src/parse.js';
+import { parseCVSS, detectCVSSVersion, isVersion2, isVersion3 } from '../src/parse.js';
 import { scoreToHue } from '../src/color.js';
 import { calculateScore } from '../src/score.js';
 import testVectors from '../spec/test-vectors.json';
@@ -23,6 +23,14 @@ const LOG4SHELL_E_A = LOG4SHELL + '/E:A';
 const LOG4SHELL_E_P = LOG4SHELL + '/E:P';
 const LOG4SHELL_E_U = LOG4SHELL + '/E:U';
 const LOG4SHELL_E_X = LOG4SHELL + '/E:X';
+
+// CVSS 2.0 test vectors (bare, no prefix)
+const CVSS2_HEARTBLEED = 'AV:N/AC:L/Au:N/C:P/I:N/A:N';
+const CVSS2_WORST = 'AV:N/AC:L/Au:N/C:C/I:C/A:C';
+const CVSS2_LOCAL_LOW = 'AV:L/AC:H/Au:M/C:P/I:N/A:N';
+const CVSS2_PREFIXED = 'CVSS:2.0/AV:N/AC:L/Au:N/C:P/I:P/A:P';
+const CVSS2_WITH_E_H = 'AV:N/AC:L/Au:N/C:C/I:C/A:C/E:H/RL:OF/RC:C';
+const CVSS2_AC_M = 'AV:N/AC:M/Au:S/C:P/I:P/A:N';
 
 describe('parseCVSS', () => {
   it('parses a full vector', () => {
@@ -84,16 +92,33 @@ describe('detectCVSSVersion', () => {
     expect(detectCVSSVersion(LOG4SHELL)).toBe('4.0');
   });
 
-  it('throws error for unsupported version', () => {
-    expect(() => detectCVSSVersion('CVSS:2.0/AV:N/AC:L/Au:N/C:P/I:P/A:P')).toThrow(
-      'Unsupported CVSS version'
-    );
+  it('detects CVSS 2.0 from bare vector', () => {
+    expect(detectCVSSVersion(CVSS2_HEARTBLEED)).toBe('2.0');
   });
 
-  it('throws error for vector without CVSS prefix', () => {
-    expect(() => detectCVSSVersion('AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H')).toThrow(
-      'Unsupported CVSS version'
-    );
+  it('detects CVSS 2.0 from prefixed vector', () => {
+    expect(detectCVSSVersion(CVSS2_PREFIXED)).toBe('2.0');
+  });
+
+  it('throws error for unsupported CVSS prefix version', () => {
+    expect(() => detectCVSSVersion('CVSS:1.0/AV:N')).toThrow('Unsupported CVSS version');
+  });
+
+  it('throws error for bare string without v2 metric structure', () => {
+    // No Au — doesn't look like a CVSS 2.0 base vector.
+    expect(() => detectCVSSVersion('foo:bar/baz:qux')).toThrow('Unsupported CVSS version');
+  });
+});
+
+describe('isVersion2', () => {
+  it('returns true for CVSS 2.0', () => {
+    expect(isVersion2('2.0')).toBe(true);
+  });
+
+  it('returns false for CVSS 3.x and 4.0', () => {
+    expect(isVersion2('3.0')).toBe(false);
+    expect(isVersion2('3.1')).toBe(false);
+    expect(isVersion2('4.0')).toBe(false);
   });
 });
 
@@ -267,5 +292,108 @@ describe('renderGlyph', () => {
     const svg = renderGlyph({ vector: CVSS31_LOG4SHELL });
     expect(svg).not.toMatch(/<circle[^>]*fill="hsla\(/);
     expect(svg).not.toMatch(/<circle[^>]*stroke="hsla\(/);
+  });
+});
+
+describe('CVSS 2.0', () => {
+  it('parses bare vector with v2 metrics', () => {
+    const m = parseCVSS(CVSS2_HEARTBLEED);
+    expect(m.AV).toBe('N');
+    expect(m.AC).toBe('L');
+    expect(m.Au).toBe('N');
+    expect(m.C).toBe('P');
+    expect(m.I).toBe('N');
+    expect(m.A).toBe('N');
+  });
+
+  it('parses prefixed vector identically to bare', () => {
+    const m = parseCVSS(CVSS2_PREFIXED);
+    expect(m.AV).toBe('N');
+    expect(m.Au).toBe('N');
+    expect(m.C).toBe('P');
+  });
+
+  it('parses temporal/environmental modifiers', () => {
+    const m = parseCVSS(CVSS2_WITH_E_H);
+    expect(m.E).toBe('H');
+    expect(m.RL).toBe('OF');
+    expect(m.RC).toBe('C');
+  });
+
+  it('parses AC:M (CVSS 2.0 Medium)', () => {
+    const m = parseCVSS(CVSS2_AC_M);
+    expect(m.AC).toBe('M');
+    expect(m.Au).toBe('S');
+  });
+
+  it('accepts v2 vector wrapped in outer parentheses', () => {
+    const wrapped = '(AV:N/AC:M/Au:N/C:N/I:P/A:N)';
+    expect(detectCVSSVersion(wrapped)).toBe('2.0');
+    const m = parseCVSS(wrapped);
+    expect(m.AV).toBe('N');
+    expect(m.AC).toBe('M');
+    expect(m.Au).toBe('N');
+    expect(m.C).toBe('N');
+    expect(m.I).toBe('P');
+    expect(m.A).toBe('N');
+    // Parens-wrapped scores match the unwrapped equivalent.
+    expect(calculateScore(wrapped)).toBeCloseTo(calculateScore('AV:N/AC:M/Au:N/C:N/I:P/A:N'), 1);
+    const svg = renderGlyph({ vector: wrapped });
+    expect(svg).toMatch(/^<svg /);
+  });
+
+  it('scores Heartbleed v2 as 5.0', () => {
+    expect(calculateScore(CVSS2_HEARTBLEED)).toBeCloseTo(5.0, 1);
+  });
+
+  it('scores worst-case v2 as 10.0', () => {
+    expect(calculateScore(CVSS2_WORST)).toBeCloseTo(10.0, 1);
+  });
+
+  it('scores prefixed v2 identically to bare', () => {
+    const bare = 'AV:N/AC:L/Au:N/C:P/I:P/A:P';
+    expect(calculateScore(CVSS2_PREFIXED)).toBeCloseTo(calculateScore(bare), 1);
+  });
+
+  it('renders bare v2 vector without throwing', () => {
+    const svg = renderGlyph({ vector: CVSS2_HEARTBLEED });
+    expect(svg).toMatch(/^<svg /);
+    expect(svg).toMatch(/<\/svg>$/);
+  });
+
+  it('renders v2 with AC:M and Au:S without throwing', () => {
+    const svg = renderGlyph({ vector: CVSS2_AC_M });
+    expect(svg).toMatch(/^<svg /);
+  });
+
+  it('renders v2 with Au:M producing a star stroke', () => {
+    const vec = 'AV:N/AC:L/Au:M/C:C/I:C/A:C';
+    const svg = renderGlyph({ vector: vec });
+    expect(svg).toMatch(/stroke-width="3.5"/);
+  });
+
+  it('renders v2 with Au:N producing no star stroke', () => {
+    const svg = renderGlyph({ vector: CVSS2_WORST });
+    expect(svg).not.toMatch(/stroke-width="3.5"/);
+    expect(svg).not.toMatch(/stroke-width="1.5"/);
+  });
+
+  it('renders v2 E:H as concentric rings marker', () => {
+    const svg = renderGlyph({ vector: CVSS2_WITH_E_H });
+    expect(svg).toMatch(/<circle[^>]*stroke="hsla\(/);
+  });
+
+  it('renders v2 local low vector', () => {
+    const svg = renderGlyph({ vector: CVSS2_LOCAL_LOW });
+    expect(svg).toMatch(/^<svg /);
+  });
+
+  it('does not render a split band (no scope in v2)', () => {
+    // Verified indirectly: with sc/si/sa = 0, hasAnySub is false so the
+    // outer sub-band arcs aren't emitted — only one arc per sector.
+    const svg = renderGlyph({ vector: CVSS2_WORST });
+    const arcCount = (svg.match(/<path d="M/g) || []).length;
+    // 3 vuln-band sectors + 1 star fill = 4. No outer sub-band paths.
+    expect(arcCount).toBeLessThanOrEqual(5);
   });
 });
