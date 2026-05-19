@@ -2,7 +2,7 @@
 
 Render CVSS vulnerability vectors as expressive SVG glyphs. Each glyph encodes all base metrics visually with shape, color, rings, and texture, so vulnerabilities are recognizable at a glance.
 
-Supports CVSS 4.0, 3.1, and 3.0.
+Supports CVSS 4.0, 3.1, 3.0, and 2.0.
 
 Visit [vulnsig.io](https://vulnsig.io) to interactively explore CVSS glyph configurations and recent or well-known CVE vector glyphs.
 
@@ -49,6 +49,16 @@ const svg3 = renderGlyph({ vector: 'CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/
 | <img src="https://raw.githubusercontent.com/vulnsig/vulnsig-ts/main/assets/log4shell-31.svg" width="80"> | Log4Shell | `AV:N AC:L PR:N UI:N S:C C:H I:H A:H` | 10.0 |
 | <img src="https://raw.githubusercontent.com/vulnsig/vulnsig-ts/main/assets/xss-reflected-31.svg" width="80"> | XSS Reflected | `AV:N AC:L PR:N UI:R S:C C:L I:L A:N` | 6.1 |
 
+### CVSS 2.0
+
+CVSS 2.0 vectors are accepted both bare and prefixed (`CVSS:2.0/...`).
+
+| Name | Vector | Score |
+|------|--------|------:|
+| Heartbleed | `AV:N/AC:L/Au:N/C:P/I:N/A:N` | 5.0 |
+| Conficker | `AV:N/AC:L/Au:N/C:C/I:C/A:C` | 10.0 |
+| Auth-required | `AV:N/AC:L/Au:S/C:P/I:P/A:P` | 6.5 |
+
 ## Visual encoding
 
 Each metric maps to a distinct visual channel:
@@ -57,12 +67,13 @@ Each metric maps to a distinct visual channel:
 |--------|---------|
 | Score | Hue — yellow (low) → orange → dark red (high) |
 | AV | Star points — N=8, A=6, L=4, P=3 |
-| AC | Star pointiness — L=sharp, H=blunt |
-| AT | Ring segmentation — N=solid, P=cut pattern |
-| PR | Star outline — N=none, L=thin, H=thick |
-| UI | Perimeter — N=spikes, P=bumps, A=clean |
-| VC/VI/VA | Inner ring brightness per sector |
-| SC/SI/SA | Outer ring band (split when any > 0) |
+| AC | Star pointiness — L=sharp, M=medium, H=blunt |
+| AT | Ring segmentation — N=solid, P=cut pattern (CVSS 4.0) |
+| PR / Au | Star outline — PR: N=none, L=thin, H=thick · Au (CVSS 2.0): N=none, S=thin, M=thick |
+| UI | Perimeter — N=spikes, P=bumps, A=clean (CVSS 3.x/4.0) |
+| VC/VI/VA · C/I/A | Inner ring brightness per sector (v2 N/P/C and v3 N/L/H share the channel) |
+| SC/SI/SA | Outer ring band (split when any > 0; CVSS 3.x/4.0 only) |
+| E | Center marker — 4.0: A=rings, P=disc · 2.0: H=rings, POC/F=disc |
 
 ## Requirements
 

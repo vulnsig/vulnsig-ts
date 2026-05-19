@@ -1,5 +1,5 @@
 import type { RenderOptions } from './types.js';
-import { parseCVSS, getSeverity, detectCVSSVersion, isVersion3 } from './parse.js';
+import { parseCVSS, getSeverity, detectCVSSVersion, isVersion2, isVersion3 } from './parse.js';
 import { calculateScore } from './score.js';
 import { scoreToHue } from './color.js';
 import { arcPath, starPath, radialCuts, ringFill } from './geometry.js';
@@ -22,25 +22,29 @@ export function renderGlyph(options: RenderOptions): string {
   // Metric severities - handle CVSS 3.0, 3.1, and 4.0
   const ac = getSeverity(metrics, 'AC');
 
-  // For CVSS 3.0/3.1, AT doesn't exist, so always treat as solid (AT:N)
-  const at = isVersion3(version) ? 1.0 : getSeverity(metrics, 'AT');
+  // CVSS 2.0 and 3.x have no AT — render as solid.
+  const at = isVersion3(version) || isVersion2(version) ? 1.0 : getSeverity(metrics, 'AT');
 
-  // For CVSS 3.0/3.1, use C/I/A instead of VC/VI/VA
-  const vc = isVersion3(version) ? getSeverity(metrics, 'C') : getSeverity(metrics, 'VC');
-  const vi = isVersion3(version) ? getSeverity(metrics, 'I') : getSeverity(metrics, 'VI');
-  const va = isVersion3(version) ? getSeverity(metrics, 'A') : getSeverity(metrics, 'VA');
+  // CVSS 2.0 and 3.x both use C/I/A (not VC/VI/VA). The shared METRIC_DEFS
+  // resolves v2's N/P/C and v3's N/L/H from the same severity table.
+  const useV3CIA = isVersion3(version) || isVersion2(version);
+  const vc = useV3CIA ? getSeverity(metrics, 'C') : getSeverity(metrics, 'VC');
+  const vi = useV3CIA ? getSeverity(metrics, 'I') : getSeverity(metrics, 'VI');
+  const va = useV3CIA ? getSeverity(metrics, 'A') : getSeverity(metrics, 'VA');
 
-  // For CVSS 3.0/3.1, if S:C (Changed), both bands mirror C/I/A. If S:U (Unchanged), no split.
+  // CVSS 2.0 has no scope. CVSS 3.x splits the band only when S:C.
   let sc: number, si: number, sa: number;
-  if (isVersion3(version)) {
+  if (isVersion2(version)) {
+    sc = 0;
+    si = 0;
+    sa = 0;
+  } else if (isVersion3(version)) {
     const scopeChanged = getSeverity(metrics, 'S') > 0.5; // S:C = 1.0, S:U = 0.0
     if (scopeChanged) {
-      // Split band: both bands mirror C/I/A
       sc = vc;
       si = vi;
       sa = va;
     } else {
-      // No split
       sc = 0;
       si = 0;
       sa = 0;
@@ -77,9 +81,10 @@ export function renderGlyph(options: RenderOptions): string {
   const starOuterR = innerR - 2;
   const starInnerR = starOuterR * (0.55 - ac * 0.35);
 
-  // PR stroke
-  const prRaw = metrics.PR;
-  const prStrokeWidth = prRaw === 'H' ? 3.5 : prRaw === 'L' ? 1.5 : 0;
+  // Star outline: CVSS 3.x/4.0 use PR (N/L/H); CVSS 2.0 reuses the channel for Au (N/S/M).
+  const prRaw = isVersion2(version) ? metrics.Au : metrics.PR;
+  const prStrokeWidth =
+    prRaw === 'H' || prRaw === 'M' ? 3.5 : prRaw === 'L' || prRaw === 'S' ? 1.5 : 0;
 
   // UI spikes/bumps
   const uiRaw = metrics.UI;
@@ -148,15 +153,16 @@ export function renderGlyph(options: RenderOptions): string {
   // Z-order 3: Background circle (transparent)
   parts.push(`<circle cx="${cx}" cy="${cy}" r="${innerR}" fill="none"/>`);
 
-  // Z-order 3.5: E (Exploit Maturity) marker — CVSS 4.0 only, behind the star
-  // A (Attacked) → concentric rings at 0.5 opacity
-  // P (PoC)      → solid filled circle at 0.3 opacity
-  // U / X        → no marker
+  // Z-order 3.5: E (Exploit Maturity) marker — CVSS 4.0 and 2.0, behind the star.
+  // CVSS 4.0: A (Attacked) → rings, P (PoC) → disc, U/X → none.
+  // CVSS 2.0: H (High)     → rings, POC/F  → disc, U/ND → none.
   const eRaw = isVersion3(version) ? undefined : metrics.E;
-  if (eRaw === 'A' || eRaw === 'P') {
+  const eRings = eRaw === 'A' || eRaw === 'H';
+  const eDisc = eRaw === 'P' || eRaw === 'POC' || eRaw === 'F';
+  if (eRings || eDisc) {
     const eCircleR = innerR - ringGap;
     const eRingGap = ringGap * 3;
-    if (eRaw === 'A') {
+    if (eRings) {
       const eColor = `hsla(${hue}, ${sat}%, ${sfLight}%, 0.5)`;
       const sw = ringWidth;
       const step = sw + eRingGap;
@@ -168,7 +174,6 @@ export function renderGlyph(options: RenderOptions): string {
         r -= step;
       }
     } else {
-      // E:P → solid filled circle
       parts.push(
         `<circle cx="${cx}" cy="${cy}" r="${eCircleR}" fill="hsla(${hue}, ${sat}%, ${sfLight}%, 0.375)"/>`,
       );
