@@ -1,8 +1,12 @@
 
 # Exploring 456 OpenClaw CVEs with VulnSig
 
+<!-- Since OpenClaw (formerly Clawdbot, Moltbot) usage exploded early in 2026, a vast array of security issues have been found within the popular AI agent. A subset of those issues are documented in Common Vulnerabilities and Exposures (CVE) records. From February through May, an extraordinary 456 CVEs related to OpenClaw have been published. -->
 
-Since OpenClaw (formerly Clawdbot, Moltbot) usage exploded early in 2026, a vast array of security issues have been found within the popular AI agent. A subset of those issues are documented in Common Vulnerabilities and Exposures (CVE) records. From February through May, an extraordinary 456 CVEs related to OpenClaw have been published.
+
+Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated 456 published Common Vulnerabilities and Exposures (CVEs) in just four months. Given that the agent runs shell commands, stores persistent credentials, and loads community-contributed skills, maybe that is not surprising. But with agents both generating vulnerable code and finding vulnerabilities faster than any human, the flood of CVEs is only growing.
+
+Others have explored the security concerns of OpenClaw. An article from February docuemnts 190 advisories and suggest that the lack of unified policy boundaries is a core reason for the high number of security issues. (["A Systematic Taxonomy of Security Vulnerabilities in the OpenClaw AI Agent Framework"](https://arxiv.org/html/2603.27517v1)).
 
 While it is possible to find these OpenClaw CVEs via the NIST National Vulnerability Database or CVE.org, quickly scanning those results is difficult, and easily observing vulnerability severity and characteristics across this many CVEs is not possible.
 
@@ -20,7 +24,7 @@ CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
 
 This CVE has a CVSS score of 8.7. The number, however, does not tell the full story available in the vector. AV:N tells us this is network-based attack; UI:N tells us no user interaction is required; and VC:H (along with VI:N and VA:N) tells us, among the confidentiality, integrity, and availability (CIA) triad, that confidentiality is the focus of this vulnerability.
 
-The VulnSig glyph applies a visual interpretation to each of these metrics. As a network-based attack, we see an 8-pointed star. As a vulnerability that requires no user interaction, we see spikes on the outer ring. And as a vulnerability only affecting confidentiality (where CIA is mapped clockwise from the top in trisection a ring), we see only the top trisection ring activated:
+The VulnSig glyph applies a visual interpretation to each of these metrics. As a network-based attack, we see an 8-pointed star. As a vulnerability that requires no user interaction, we see spikes on the outer ring. And as a vulnerability only affecting confidentiality (where CIA is mapped clockwise from the top in three ring trisections), we see only the top trisection ring activated:
 
 ![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.N-UI.N-VC.H-VI.N-VA.N-SC.N-SI.N-SA.N&size=100)
 
@@ -34,7 +38,7 @@ The glyph for this vector is clearly distinguishable from the previous glyph.
 
 ![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.L-UI.N-VC.N-VI.H-VA.L-SC.N-SI.N-SA.N&size=100)
 
-The four-pointed star conveys attack vector (AV:L) as a local-based attack requiring OS-level access to the system. For CIA triad exposure, we see high vulnerability on integrity (VA:H) and low vulnerability on availability (VA:L).
+The four-pointed star conveys attack vector (AV:L) as a local-based attack requiring OS-level access to the system. For CIA triad exposure, we see high vulnerability on integrity (VI:H) and low vulnerability on availability (VA:L).
 
 While the overall coloring of the glyph is a representation of the score, VulnSig glyphs can provide distinguishing information even when the score is the same. Consider two more OpenClaw CVEs, CVE-2026-43585 and CVE-2026-32918, both having a 9.2 CVSS score:
 
@@ -42,7 +46,7 @@ While the overall coloring of the glyph is a representation of the score, VulnSi
 
 ![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.L-UI.N-VC.H-VI.H-VA.N-SC.H-SI.H-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
 
-The former glyph has a blunt star, reflecting high attack complexity (AC:H) and a full trisection ring reflecting full CIA impact (VC:H, VI:H, VA:H). Note, however, that the trisection ring is stripped, expressing that attack requirements are present (AT:P)
+The former glyph has a blunt star, reflecting high attack complexity (AC:H) and a full trisection ring reflecting full CIA impact (VC:H, VI:H, VA:H). Note, however, that the trisection ring is striped, expressing that attack requirements are present (AT:P)
 
 The latter glyph has a split trisection ring for confidentiality and integrity, showing that there is both high system and subsequent system impacts (VC:H, VI:H, SC:H, SI:H).
 
@@ -64,7 +68,6 @@ Finally, vulnsig.io offers a free newsletter, providing an email with VulnSig gl
 
 ## Conclusion
 
-For OpenClaw, 456 CVEs in four months is impressive, but not inconceivable. Products with longer histories have even more significant counts of CVEs: for example, we find 4,113 CVEs associated with [Google Chrome](https://vulnsig.io/?tab=search&q=google+chrome).
+For OpenClaw, 456 CVEs in four months is impressive, but not inconceivable. Older products can carry far more: for example, we find 4,113 CVEs associated with [Google Chrome](https://vulnsig.io/?tab=search&q=google+chrome).
 
 While widespread use of CVSS scores provides a convenient expression of severity, it leaves behind rich characteristics embedded in the CVSS vector: VulnSig glyphs make those characteristics immediately visible. With the rapidly growing volume of CVEs owing to AI-accelerated vulnerability discovery, VulnSig aids in quickly assessing CVE features.
-
