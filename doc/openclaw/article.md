@@ -53,13 +53,17 @@ A complete [legend](https://vulnsig.io/?tab=legend) of encoding characteristics 
 
 ## vulnsig.io
 
-The vulnsig.io site provides tools to interactively explore CVSS vectors and how those vectors translate into scores and VulnSig glyphs. In addition, it lets users browse hundreds of VulnSig glyphs representing recent CVEs published in the NIST National Vulnerability Database (NVD) and the CISA Known Exploited Vulnerabilities (KEV) Catalog.
+The vulnsig.io site provides tools to interactively explore CVSS vectors and how those vectors translate into scores and VulnSig glyphs.
 
-The site also provides a public API to provide SVG or PNG glyphs via a vulnsig.io URL, and links to VulnSig packages in TypeScript, React, Python, and Rust to derive VulnSig glyphs locally.
+In addition, it lets users browse hundreds of VulnSig glyphs representing recent CVEs published in the NIST National Vulnerability Database (NVD) and the CISA Known Exploited Vulnerabilities (KEV) Catalog.
 
-When NVD CVE data is ingested, an LLM is used to identify the key product associated with each CVE. The vulnsig.io site permits searching these products, providing, as shown above, easy discovery of the 456 OpenClaw CVEs in a shareable [link](https://vulnsig.io/?tab=search&q=openclaw).
+A public API serves SVG or PNG glyphs from any CVSS vector via URL, and packages in TypeScript, React, Python, and Rust let you derive glyphs locally, useful for embedding in dashboards, vulnerability reports, or CI integrations.
 
-Finally, vulnsig.io offers a free newsletter, providing an email with VulnSig glyphs and information about recent CVEs, accompanied by an LLM-generated summary of recent vulnerability trends. Sign up [here](https://vulnsig.io/?tab=subscribe).
+
+
+When NVD CVE data is ingested, an LLM is used to identify the key product associated with each CVE. LLM tagging makes product-level CVE enrichment feasible, with occasional errors as the tradeoff. The vulnsig.io site permits searching these products, providing easy discovery of the 456 OpenClaw CVEs in a shareable [link](https://vulnsig.io/?tab=search&q=openclaw).
+
+A free newsletter delivers recent CVEs as glyphs, with an LLM-generated summary of vulnerability trends. Sign up [here](https://vulnsig.io/?tab=subscribe).
 
 
 ## Conclusion
