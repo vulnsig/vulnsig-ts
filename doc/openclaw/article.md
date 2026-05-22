@@ -1,16 +1,11 @@
 
 # Exploring 456 OpenClaw CVEs with VulnSig
 
-<!-- Since OpenClaw (formerly Clawdbot, Moltbot) usage exploded early in 2026, a vast array of security issues have been found within the popular AI agent. A subset of those issues are documented in Common Vulnerabilities and Exposures (CVE) records. From February through May, an extraordinary 456 CVEs related to OpenClaw have been published. -->
+Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated an extraordinary 456 published Common Vulnerabilities and Exposures (CVEs) in just four months. [Researchers](https://arxiv.org/html/2603.27517v1) have traced the abundance of security failures to a lack of unified policy boundaries across the framework's many layers.
 
+With agents now both generating vulnerable code and finding new vulnerabilities at breakneck pace, the number of CVEs is growing rapidly. While it is possible to find OpenClaw CVEs via the NIST National Vulnerability Database or CVE.org, quickly scanning those results is difficult, and easily observing vulnerability severity and characteristics across this many CVEs is just not possible.
 
-Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated 456 published Common Vulnerabilities and Exposures (CVEs) in just four months. Given that the agent runs shell commands, stores persistent credentials, and loads community-contributed skills, maybe that is not surprising. But with agents both generating vulnerable code and finding vulnerabilities faster than any human, the flood of CVEs is only growing.
-
-Others have explored the security concerns of OpenClaw. An article from February docuemnts 190 advisories and suggest that the lack of unified policy boundaries is a core reason for the high number of security issues. (["A Systematic Taxonomy of Security Vulnerabilities in the OpenClaw AI Agent Framework"](https://arxiv.org/html/2603.27517v1)).
-
-While it is possible to find these OpenClaw CVEs via the NIST National Vulnerability Database or CVE.org, quickly scanning those results is difficult, and easily observing vulnerability severity and characteristics across this many CVEs is not possible.
-
-The VulnSig glyph and the vulnsig.io site offer an alternative: VulnSig glyphs offer a visual understanding of vulnerability severity and characteristics, and vulnsig.io makes CVE discovery easy. For example, see all 456 OpenClaw CVEs [here](https://vulnsig.io/?tab=search&q=openclaw).
+Visual encoding can do what text and numbers cannot. VulnSig glyphs translate CVSS vectors into a visual signature, and vulnsig.io makes CVE discovery easy. For example, see all 456 OpenClaw CVEs [here](https://vulnsig.io/?tab=search&q=openclaw).
 
 ## The VulnSig Glyph
 
@@ -71,3 +66,11 @@ Finally, vulnsig.io offers a free newsletter, providing an email with VulnSig gl
 For OpenClaw, 456 CVEs in four months is impressive, but not inconceivable. Older products can carry far more: for example, we find 4,113 CVEs associated with [Google Chrome](https://vulnsig.io/?tab=search&q=google+chrome).
 
 While widespread use of CVSS scores provides a convenient expression of severity, it leaves behind rich characteristics embedded in the CVSS vector: VulnSig glyphs make those characteristics immediately visible. With the rapidly growing volume of CVEs owing to AI-accelerated vulnerability discovery, VulnSig aids in quickly assessing CVE features.
+
+
+
+
+<!-- Since OpenClaw (formerly Clawdbot, Moltbot) usage exploded early in 2026, a vast array of security issues have been found within the popular AI agent. A subset of those issues are documented in Common Vulnerabilities and Exposures (CVE) records. From February through May, an extraordinary 456 CVEs related to OpenClaw have been published. -->
+
+
+<!-- That the agent runs shell commands, stores persistent credentials, and loads community-contributed skills . -->
