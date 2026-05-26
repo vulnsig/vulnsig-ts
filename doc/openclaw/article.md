@@ -1,32 +1,33 @@
 
-# Exploring 456 OpenClaw CVEs with VulnSig
 
-Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated an extraordinary 456 published Common Vulnerabilities and Exposures (CVEs) in just four months. [Researchers](https://arxiv.org/html/2603.27517v1) have traced the abundance of security failures to a lack of unified policy boundaries across the framework's many layers.
+# Scan Hundreds of CVEs at a Glance With VulnSig
+
+Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated 456 published Common Vulnerabilities and Exposures (CVEs) in just four months. [Researchers](https://arxiv.org/html/2603.27517v1) trace the abundance of security failures to a lack of unified policy boundaries across the framework's many layers.
 
 With agents now both generating vulnerable code and finding new vulnerabilities at breakneck pace, the number of CVEs is growing rapidly. While it is possible to find OpenClaw CVEs via the NIST National Vulnerability Database or CVE.org, quickly scanning those results is difficult, and easily observing vulnerability severity and characteristics across this many CVEs is not possible.
 
-Visual encoding can do what text and numbers cannot. VulnSig glyphs translate CVSS vectors into a visual signature, and vulnsig.io makes CVE discovery easy. For example, browse all 456 OpenClaw CVEs [here](https://vulnsig.io/?tab=search&q=openclaw).
+A visual encoding can do what text and numbers cannot. VulnSig glyphs translate CVSS vectors into a visual signature, and vulnsig.io makes CVE discovery easy. For example, browse all 456 OpenClaw CVEs [here](https://vulnsig.io/?tab=search&q=openclaw).
 
 
 ## The VulnSig Glyph
 
 If you follow cybersecurity news, you are likely familiar with the Common Vulnerability Scoring System ([CVSS](https://www.first.org/cvss)), a tool for defining the characteristics of a vulnerability and assigning it a score from 0 to 10 (10 being the most severe). The score is calculated based on a vector, a string of eight or more pairs of metrics and values.
 
-A vector string starts with a version identifier, then continues with metric and value pairs; metrics and values are separated with a colon, pairs are separated with a slash. For example, CVE-2026-32846, an OpenClaw path traversal vulnerability, has the following vector:
+A vector starts with a version identifier, then continues with metric and value pairs; metrics and values are separated with a colon, pairs are separated with a slash. For example, CVE-2026-32846, an OpenClaw path traversal vulnerability, has the following vector:
 
 ```
 CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
 ```
 
-The CVSS score of 8.7, however, does not tell the full vector story. This is a network-based attack (AV:N), no user interaction is required (UI:N), and among the confidentiality, integrity, and availability (CIA) triad, only confidentiality is vulnerable (VC:H).
+The CVSS score of 8.7, however, does not tell the full vector story. This is a network-based attack (AV:N), no user interaction is required (UI:N), and among the confidentiality, integrity, and availability (CIA) triad, only confidentiality is impacted (VC:H).
 
 The VulnSig glyph applies a visual interpretation to each of these metrics. The design principle is simple: the greater the threat, the sharper, more aggressive the geometry. While any such mapping is highly subjective, these are at least explicit and identifiable. Consider the VulnSig glyph for CVE-2026-32846:
 
 ![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.N-UI.N-VC.H-VI.N-VA.N-SC.N-SI.N-SA.N&size=100)
 
-The 8-pointed star denotes a network-based attack. As a vulnerability that requires no user interaction, we see spikes on the outer ring. As a vulnerability only affecting confidentiality (where C, I, and A are mapped clockwise from the top in three arcs of a ring), we see only the top arc activated.
+The 8-pointed star denotes a network-based attack. As a vulnerability that requires no user interaction, we see spikes on the outer ring. As only confidentiality is affected (where C, I, and A are mapped clockwise from the top in three arcs of a ring), we see only the top arc activated.
 
-Contrast this with the vector and glyph for the OpenClaw CVE-2026-22176, a command injection vulnerability:
+Contrast this with the vector and glyph for CVE-2026-22176, an OpenClaw command injection vulnerability:
 
 ```
 CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:N/VI:H/VA:L/SC:N/SI:N/SA:N
@@ -34,9 +35,9 @@ CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:N/VI:H/VA:L/SC:N/SI:N/SA:N
 
 ![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.L-UI.N-VC.N-VI.H-VA.L-SC.N-SI.N-SA.N&size=100)
 
-The four-pointed star marks it as a local attack (AV:L), and the CIA arcs show high integrity and low availability vulnerabilities (VI:H, VA:L).
+The four-pointed star marks it as a local attack (AV:L), and the CIA arcs show high integrity and low availability impact (VI:H, VA:L).
 
-Finally, examine CVE-2026-43585 and CVE-2026-32918, both OpenClaw vulnerabilities with a score of 9.2:
+Lastly, examine CVE-2026-43585 and CVE-2026-32918, two OpenClaw vulnerabilities with identical CVSS scores of 9.2:
 
 ![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.H-AT.P-PR.N-UI.N-VC.H-VI.H-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
 
@@ -46,7 +47,7 @@ The former glyph is a blunt star, reflecting high attack complexity (AC:H) and a
 
 The latter glyph is a narrow star reflecting low attack complexity (AC:L) with confidentiality and integrity rings split, showing high impact on both the vulnerable system and subsequent systems (VC:H, VI:H, SC:H, SI:H).
 
-While a CVSS score collapses multiple metrics into a single number, the VulnSig glyph preserves metrics, permitting same-scored CVEs to have completely different appearances.
+While a CVSS score collapses multiple metrics into a single number, the VulnSig glyph preserves metrics, permitting same-scored CVEs such as these to have completely different appearances.
 
 A complete [legend](https://vulnsig.io/?tab=legend) of encoding characteristics can be found on vulnsig.io, as well as a [quiz](https://vulnsig.io/?tab=quiz) to help practice reading glyphs.
 
@@ -57,16 +58,22 @@ The vulnsig.io site provides tools to interactively explore CVSS vectors and how
 
 When NVD CVE data is ingested, an LLM identifies the key product associated with each CVE. LLM tagging makes product-level CVE enrichment feasible, with the tradeoff of occasional errors. The vulnsig.io site permits searching these products, providing easy discovery of the 456 OpenClaw CVEs and a shareable [link](https://vulnsig.io/?tab=search&q=openclaw).
 
-A public API serves SVG or PNG glyphs for any CVSS vector via a URL, and packages for TypeScript, React, Python, and Rust let you derive glyphs locally -- useful for embedding in dashboards, vulnerability reports, or CI integrations.
+A public API serves SVG or PNG glyphs for any CVSS vector via a vulnsig.io URL, and packages for TypeScript, React, Python, and Rust let you derive glyphs locally -- useful for embedding in dashboards, vulnerability reports, or CI integrations.
 
 Finally, the VulnSig Digest is a free newsletter delivering recent CVEs as glyphs, with an LLM-generated summary of vulnerability trends. Sign up [here](https://vulnsig.io/?tab=subscribe).
 
 
 ## Conclusion
 
-OpenClaw is unlikely to be the last agent or vibe-coded tool to mint hundreds of CVEs in a matter of months. Stop just scanning CVSS scores: use VulnSig glyphs to see the full vector spectrum at a glance.
+OpenClaw is unlikely to be the last agent or vibe-coded tool to mint hundreds of CVEs in a matter of months. As vulnerability counts grow, you can do better than just scanning CVSS scores: use VulnSig to see the full vector spectrum at a glance.
 
 <!--
+
+
+# Exploring 456 OpenClaw CVEs with VulnSig
+# Scanning 456 OpenClaw CVEs at a Glance with VulnSig
+# Your CVSS Scores Are Hiding Something
+
 CVSS scores alone mask informative characteristics that VulnSig glyphs preserve.
 
 
