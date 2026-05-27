@@ -1,6 +1,6 @@
 
 
-# Scan Hundreds of CVEs at a Glance With VulnSig
+# Scan Hundreds of CVEs at a Glance with VulnSig
 
 Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated 456 published Common Vulnerabilities and Exposures (CVEs) in just four months. [Researchers](https://arxiv.org/html/2603.27517v1) trace the abundance of security failures to a lack of unified policy boundaries across the framework's many layers.
 
@@ -25,7 +25,7 @@ The VulnSig glyph applies a visual interpretation to each of these metrics. The 
 
 ![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.N-UI.N-VC.H-VI.N-VA.N-SC.N-SI.N-SA.N&size=100)
 
-The 8-pointed star denotes a network-based attack. As a vulnerability that requires no user interaction, we see spikes on the outer ring. As only confidentiality is affected (where C, I, and A are mapped clockwise from the top in three arcs of a ring), we see only the top arc activated.
+The eight-pointed star denotes a network-based attack. As a vulnerability that requires no user interaction, we see spikes on the outer ring. As only confidentiality is affected (where C, I, and A are mapped clockwise from the top in three arcs of a ring), we see only the top arc activated.
 
 Contrast this with the vector and glyph for CVE-2026-22176, an OpenClaw command injection vulnerability:
 
@@ -65,10 +65,12 @@ Finally, the VulnSig Digest is a free newsletter delivering recent CVEs as glyph
 
 ## Conclusion
 
-OpenClaw is unlikely to be the last agent or vibe-coded tool to mint hundreds of CVEs in a matter of months. As vulnerability counts grow, you can do better than just scanning CVSS scores: use VulnSig to see the full vector spectrum at a glance.
+OpenClaw is unlikely to be the last agent or vibe-coded tool to mint hundreds of CVEs in a matter of months. At this volume, scanning CVSS scores alone is inefficient. VulnSig glyphs make the full vector spectrum visible at a glance.
 
 <!--
 
+OpenClaw is unlikely to be the last agent or vibe-coded tool to mint hundreds of CVEs in a matter of months. As vulnerability counts grow, VulnSig offers the full vector spectrum at a glance.
+you can do better than just scanning CVSS scores:
 
 # Exploring 456 OpenClaw CVEs with VulnSig
 # Scanning 456 OpenClaw CVEs at a Glance with VulnSig
