@@ -1,12 +1,22 @@
 
 
-# Scan Hundreds of CVEs at a Glance with VulnSig
+# Understanding the 456 OpenClaw CVEs in Charts & Glyphs
 
-Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated 456 published Common Vulnerabilities and Exposures (CVEs) in just four months. [Researchers](https://arxiv.org/html/2603.27517v1) trace the abundance of security failures to a lack of unified policy boundaries across the framework's many layers.
+<!-- feb through may -->
 
-With agents now both generating vulnerable code and finding new vulnerabilities at breakneck pace, the number of CVEs is growing rapidly. While it is possible to find OpenClaw CVEs via the NIST National Vulnerability Database or CVE.org, quickly scanning those results is difficult, and easily observing vulnerability severity and characteristics across this many CVEs is not possible.
 
-A visual encoding can do what text and numbers cannot. VulnSig glyphs translate CVSS vectors into a visual signature, and vulnsig.io makes CVE discovery easy. For example, browse all 456 OpenClaw CVEs [here](https://vulnsig.io/?tab=search&q=openclaw).
+Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated 456 published Common Vulnerabilities and Exposures (CVEs) in just four months. While [some](https://blogs.cisco.com/ai/personal-ai-agents-like-openclaw-are-a-security-nightmare) have called it a "security nightmare", more extensive [research](https://arxiv.org/html/2603.27517v1) traces the abundance of security failures to a lack of unified policy boundaries across the framework's many layers.
+
+With agents now both generating vulnerable code and finding new vulnerabilities at breakneck pace, the number of CVEs is growing rapidly. While it is possible to find OpenClaw CVEs via the NIST National Vulnerability Database or CVE.org, quickly scanning and understanding those results is difficult, and easily observing vulnerability severity and characteristics across this many CVEs is not possible.
+
+To support our understanding of OpenClaw CVEs, we will use resources from vulnsig.io, a free, open-source toolkit I created for making CVE characteristics visible and quantifiable.
+Aggregate characteristics and all 456 OpenClaw CVEs referenced in this article are available [here](https://vulnsig.io/?tab=search&q=openclaw).
+
+## VulnSig Aggregate Metrics
+
+For a given product, VulnSig can provide a plot of all aggregate Common Vulnerability Scoring System ([CVSS](https://www.first.org/cvss)) metrics from all CVEs:
+
+http://vulnsig.io/api/metrics/svg?q=openclaw
 
 
 ## The VulnSig Glyph
@@ -52,20 +62,10 @@ While a CVSS score collapses multiple metrics into a single number, the VulnSig 
 A complete [legend](https://vulnsig.io/?tab=legend) of encoding characteristics can be found on vulnsig.io, as well as a [quiz](https://vulnsig.io/?tab=quiz) to help practice reading glyphs.
 
 
-## vulnsig.io
-
-The vulnsig.io site provides tools to interactively explore CVSS vectors and how those vectors translate into scores and VulnSig glyphs. Users can also browse hundreds of glyphs for recent CVEs published in the NIST National Vulnerability Database (NVD) and the CISA Known Exploited Vulnerabilities (KEV) Catalog.
-
-When NVD CVE data is ingested, an LLM identifies the key product associated with each CVE. LLM tagging makes product-level CVE enrichment feasible, with the tradeoff of occasional errors. The vulnsig.io site permits searching these products, providing easy discovery of the 456 OpenClaw CVEs and a shareable [link](https://vulnsig.io/?tab=search&q=openclaw).
-
-A public API serves SVG or PNG glyphs for any CVSS vector via a vulnsig.io URL, and packages for TypeScript, React, Python, and Rust let you derive glyphs locally -- useful for embedding in dashboards, vulnerability reports, or CI integrations.
-
-Finally, the VulnSig Digest is a free newsletter delivering recent CVEs as glyphs, with an LLM-generated summary of vulnerability trends. Sign up [here](https://vulnsig.io/?tab=subscribe).
-
 
 ## Conclusion
 
-OpenClaw is unlikely to be the last agent or vibe-coded tool to mint hundreds of CVEs in a matter of months. At this volume, scanning CVSS scores alone is inefficient. VulnSig glyphs make the full vector spectrum visible at a glance.
+OpenClaw is unlikely to be the last agent or vibe-coded tool to mint hundreds of CVEs in a matter of months. Tools like VulnSig support quickly understanding the full vector spectrum of vulnerability characteristics at increasingly large scales.
 
 <!--
 
