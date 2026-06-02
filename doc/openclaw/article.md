@@ -10,7 +10,7 @@ Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI ag
 With agents now both generating vulnerable code and finding new vulnerabilities at breakneck pace, the number of CVEs is growing rapidly. While it is possible to find OpenClaw CVEs via the NIST National Vulnerability Database or CVE.org, quickly scanning and understanding those results is difficult, and easily observing vulnerability severity and characteristics across this many CVEs is not possible.
 
 To support our understanding of OpenClaw CVEs, we will use resources from vulnsig.io, a free, open-source toolkit I created for making CVE characteristics visible and quantifiable.
-Aggregate characteristics and all 456 OpenClaw CVEs referenced in this article are available [here](https://vulnsig.io/?tab=search&q=openclaw).
+Aggregate metrics and all 456 OpenClaw CVEs referenced in this article are available [here](https://vulnsig.io/?tab=search&q=openclaw).
 
 ## VulnSig Aggregate Metrics
 
