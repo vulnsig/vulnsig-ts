@@ -1,6 +1,7 @@
 
 
 # Making Sense of the 462 OpenClaw CVEs in Four Months
+# 462 CVEs in Four Months: Making Sense of OpenClaw Vulnerabilities
 
 <!-- feb through may -->
 
@@ -12,7 +13,7 @@ With agents now both generating vulnerable code and finding new vulnerabilities 
 To support understanding large CVE volumes associated with specific products, we will use resources from `vulnsig.io`, a free, open-source toolkit I created for making CVE characteristics visible and quantifiable. Aggregate metrics and all 462 OpenClaw CVEs referenced in this article are available [here](https://vulnsig.io/?tab=search&q=openclaw).
 
 
-## The A Visual Interpretation of CVSS
+## A Visual Interpretation of CVSS
 
 If you follow cybersecurity news, you are likely familiar with the Common Vulnerability Scoring System ([CVSS](https://www.first.org/cvss)), a tool for defining the characteristics of a vulnerability and assigning it a score from 0 to 10 (10 being the most severe). The score is calculated based on a vector, a string of eight or more pairs of metrics and values.
 
@@ -60,19 +61,33 @@ An example of a critical vulnerability, with a CVSS score of 9.4, is CVE-2026-32
 
 At a glance, the glyph of CVE-2026-32922 tells us it is a network-based attack (AV:N, 8-pointed star) with low complexity (AC:L, narrow points) and no user interaction (UI:N, outer spikes). Both the vulnerable and subsequent systems show high impact in each of confidentiality, integrity, and availability (VC:H/VI:H/VA:H/SC:H/SI:H/SA:H, split solid rings).
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.L-UI.N-VC.H-VI.H-VA.H-SC.H-SI.H-SA.H-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=64)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.L-UI.N-VC.H-VI.H-VA.H-SC.H-SI.H-SA.H-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
 
 
-### Distribution CVSS Metrics
+### Distribution of CVSS Metrics
 
 First, lets consider the distribution of attack vector (AV) characteristics.
 
 Attack Vector | Network | Adjacent | Local |
               | 357     | 8        | 97    |
 
-Of the 462 CVES, over three-quarters are network based, meaning that an internet-facing OpenClaw instance is vulnerable from anywhere on the internet. The 97 local CVEs represent threats from users that find a way on to the system running OpenClaw: certainly more challenging
+Of the 462 OpenClaw CVES, over three-quarters are network based, meaning that an internet-facing OpenClaw instance is vulnerable from anywhere on the internet.
+
+The 97 local CVEs represent threats from users that find a way on to the system running OpenClaw. For example, the vulnerability described by CVE-2026-32920 requires an attacker, on the vulnerable system, to place malicious code in the OpenClaw extensions directory; prior to correction, OpenClaw automatically discovers and loads plugins from this directory without verification, permitting arbitrary code execution.
+
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.N-UI.N-VC.H-VI.H-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
 
 
+Second, the distribution of user interaction (UI) metrics shows that overy 80% of OpenClaw vulnerabilities require no user interaction, making them easier to exploit by attackers.
+
+User Interaction | None | Required | Passive | Active |
+                 | 381  | 8        | 45      | 28     |
+
+The "none" value is often referred to as a "zero-click exploit": the attack is fully automated and requires no action from the user.
+
+We can look at CVE-2026-28394 as example of the other extreme: when a vulnerability requires active user interaction. Here, an attacker can prepare an HTML site with a potentially large data payload or deeply nested structure that, when loaded by OpenClaw, can crash the application due to memory exhaustion. The attacker must find a way for the user (or the agent) to examine the site in the first place.
+
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.N-UI.A-VC.N-VI.N-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
 
 
 ## Conclusion
