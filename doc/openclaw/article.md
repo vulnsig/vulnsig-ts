@@ -1,8 +1,5 @@
 
 # The Shape of 462 OpenClaw CVEs in Four Months
-# 462 CVEs in Four Months: Measuring the Shape of OpenClaw Vulnerabilities
-# 462 CVEs in Four Months: Making Sense of OpenClaw Vulnerabilities
-
 
 Since its viral rise earlier this year, OpenClaw (the self-hosted personal AI agent formerly known as Clawdbot and Moltbot) has accumulated 462 published Common Vulnerabilities and Exposures (CVEs) in just four months (February through May of 2026). While [some](https://blogs.cisco.com/ai/personal-ai-agents-like-openclaw-are-a-security-nightmare) simply call OpenClaw a "security nightmare", more extensive [research](https://arxiv.org/html/2603.27517v1) traces the abundance of security failures to a lack of unified policy boundaries across the framework's many layers.
 
@@ -26,7 +23,7 @@ The CVSS score of 8.7, however, does not tell the full vector story. This is a n
 
 VulnSig permits creating glyphs from vectors, offering a visual interpretation of CVSS metrics. The design principle is simple: the greater the threat, the sharper, more aggressive the geometry. While any such mapping is highly subjective, these are at least explicit and identifiable. Consider the VulnSig glyph for CVE-2026-32846:
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.N-UI.N-VC.H-VI.N-VA.N-SC.N-SI.N-SA.N&size=100)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.N-UI.N-VC.H-VI.N-VA.N-SC.N-SI.N-SA.N&size=120)
 
 The eight-pointed star denotes a network-based attack. As a vulnerability that requires no user interaction, we see spikes on the outer ring. As only confidentiality is affected (where C, I, and A are mapped clockwise from the top in three arcs of a ring), we see only the top arc activated.
 
@@ -36,7 +33,7 @@ Contrast this with the vector and glyph for CVE-2026-22176, an OpenClaw command 
 CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:N/VI:H/VA:L/SC:N/SI:N/SA:N
 ```
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.L-UI.N-VC.N-VI.H-VA.L-SC.N-SI.N-SA.N&size=100)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.L-UI.N-VC.N-VI.H-VA.L-SC.N-SI.N-SA.N&size=120)
 
 The four-pointed star marks it as a local attack (AV:L), and the CIA arcs show high integrity and low availability impact (VI:H, VA:L).
 
@@ -61,7 +58,7 @@ An example of a critical vulnerability, with a CVSS score of 9.4, is CVE-2026-32
 
 At a glance, the glyph of CVE-2026-32922 tells us it is a network-based attack (AV:N, 8-pointed star) with low complexity (AC:L, narrow points) and no user interaction (UI:N, outer spikes). Both the vulnerable and subsequent systems show high impact across the full CIA triad (VC:H/VI:H/VA:H/SC:H/SI:H/SA:H, split solid rings).
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.L-UI.N-VC.H-VI.H-VA.H-SC.H-SI.H-SA.H-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.L-UI.N-VC.H-VI.H-VA.H-SC.H-SI.H-SA.H-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=120)
 
 It is important to remember that individual severity scores can understate risk when vulnerabilities are combined. For example, the [Claw Chain](https://www.cyera.com/blog/claw-chain-cyera-research-unveil-four-chainable-vulnerabilities-in-openclaw) employs four chainable OpenClaw flaws to go from initial foothold to data theft, privilege escalation, and persistence.
 
@@ -78,7 +75,7 @@ Of the 462 OpenClaw CVEs, over three-quarters are network based, meaning that an
 
 The 97 local CVEs represent threats from attackers who have already reached a system running OpenClaw. CVE-2026-32920 is one example: as OpenClaw automatically discovers and loads plugins from its extensions directory without verification, an attacker who can place malicious code in that directory can achieve arbitrary code execution.
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.N-UI.N-VC.H-VI.H-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.N-UI.N-VC.H-VI.H-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=120)
 
 
 Second, the distribution of user interaction (UI) metrics (for both CVSS 3.1 and 4.0) shows that over 80% of OpenClaw vulnerabilities require no user interaction, making them easier to exploit.
@@ -93,7 +90,7 @@ At the other extreme, CVE-2026-28394 requires active user interaction: an attack
 
 The VulnSig glyph expresses the requirement of user interaction with the absence of "spikes" or "bumps" on the outer ring. Note also that, among the CIA triad, only availability is affected by this vulnerability:
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.N-UI.A-VC.N-VI.N-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.N-PR.N-UI.A-VC.N-VI.N-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=120)
 
 Third, consider the distribution of CIA impact across all vulnerabilities. As a single vulnerability can specify impact on any combination of confidentiality, integrity, and availability, the maximum possible count for each category is 462.
 
@@ -107,7 +104,7 @@ CVE-2026-28454 is an example that affects only integrity: OpenClaw failed to val
 
 The VulnSig glyph for this vulnerability clearly shows the exclusive integrity impact. The striped arc expresses that attack requirements are present: the Telegram webhook must be active and the attacker must know a valid user's internal message identifiers.
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.P-PR.N-UI.N-VC.N-VI.H-VA.N-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.L-AT.P-PR.N-UI.N-VC.N-VI.H-VA.N-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=120)
 
 ## Conclusion
 
@@ -120,38 +117,18 @@ https://thehackernews.com/2026/05/four-openclaw-flaws-enable-data-theft.html
 
 # Making Sense of the 462 OpenClaw CVEs in Four Months
 
+# The Shape of the 462 OpenClaw CVEs Found in Four Months
+# 462 CVEs in Four Months: Measuring the Shape of OpenClaw Vulnerabilities
+# 462 CVEs in Four Months: Making Sense of OpenClaw Vulnerabilities
+
 -->
 
 <!-- Hundreds of CVEs can be rapidly scanned to find distinct vector characteristics.  -->
 
 
 <!--
-
-OpenClaw is unlikely to be the last agent or vibe-coded tool to mint hundreds of CVEs in a matter of months. As vulnerability counts grow, VulnSig offers the full vector spectrum at a glance.
-you can do better than just scanning CVSS scores:
-
-# Exploring 462 OpenClaw CVEs with VulnSig
-# Scanning 462 OpenClaw CVEs at a Glance with VulnSig
-# Your CVSS Scores Are Hiding Something
-
-CVSS scores alone mask informative characteristics that VulnSig glyphs preserve.
-
-
-While widespread use of CVSS scores provides a convenient expression of severity, it leaves behind rich characteristics embedded in the CVSS vector: VulnSig glyphs make those characteristics immediately visible. With the rapidly growing volume of CVEs owing to AI-accelerated vulnerability discovery, VulnSig aids in quickly assessing CVE features.
-
-
-462 CVEs in four months. The number will only get larger, and it won't only be OpenClaw. CVSS scores compress what's worth seeing; VulnSig glyphs preserve it. -->
-
-<!-- Since OpenClaw (formerly Clawdbot, Moltbot) usage exploded early in 2026, a vast array of security issues have been found within the popular AI agent. A subset of those issues are documented in Common Vulnerabilities and Exposures (CVE) records. From February through May, an extraordinary 462 CVEs related to OpenClaw have been published. -->
-
-
-<!-- That the agent runs shell commands, stores persistent credentials, and loads community-contributed skills . -->
-
-
-<!--
 We can contrast this with OpenClaw CVE-2026-22176, a command injection vulnerability:
 The glyph for this vector is clearly distinguishable from the previous glyph. -->
-
 
 
 <!-- The general spirit of the visual encoding is that the greater the vulnerability threat, the sharper and more aggressive the glyph appears. While mapping to visual characteristics is highly subjective, with frequent exposure the encoding is at least explicit and identifiable.  -->
@@ -162,20 +139,18 @@ The glyph for this vector is clearly distinguishable from the previous glyph. --
 
 <!-- A CVSS score collapses twelve metric dimensions into a single number. The glyph preserves them — which is why two CVEs with identical scores can look entirely different."
 
-
 While the overall coloring of the glyph is a representation of the score, VulnSig glyphs can provide distinguishing information even when the score is the same.
 -->
 
 
-<!-- For OpenClaw, 462 CVEs in four months is impressive, but not inconceivable. Older products can carry far more: for example, we find 4,113 CVEs associated with [Google Chrome](https://vulnsig.io/?tab=search&q=google+chrome). -->
 
 
 <!--
 Lastly, examine CVE-2026-43585 and CVE-2026-32918, two OpenClaw vulnerabilities with identical CVSS scores of 9.2:
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.H-AT.P-PR.N-UI.N-VC.H-VI.H-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.N-AC.H-AT.P-PR.N-UI.N-VC.H-VI.H-VA.H-SC.N-SI.N-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=120)
 
-![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.L-UI.N-VC.H-VI.H-VA.N-SC.H-SI.H-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=100)
+![vulnsig](https://vulnsig.io/api/svg?vector=CVSS.4.0-AV.L-AC.L-AT.N-PR.L-UI.N-VC.H-VI.H-VA.N-SC.H-SI.H-SA.N-E.X-CR.X-IR.X-AR.X-MAV.X-MAC.X-MAT.X-MPR.X-MUI.X-MVC.X-MVI.X-MVA.X-MSC.X-MSI.X-MSA.X-S.X-AU.X-R.X-V.X-RE.X-U.X&size=120)
 
 The former glyph is a blunt star, reflecting high attack complexity (AC:H) and a ring reflecting full CIA impact (VC:H, VI:H, VA:H). Here, the CIA ring is striped, showing that attack requirements are present (AT:P).
 
